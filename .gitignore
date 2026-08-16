@@ -1,0 +1,35 @@
+# RStudio / R session files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# renv: track the lockfile, not the library
+renv/library/
+renv/local/
+renv/cellar/
+renv/staging/
+
+# compiled Stan binaries: ignore everything in inst/stan except the .stan sources
+inst/stan/*
+!inst/stan/*.stan
+
+# regenerated intermediate figures
+analysis/figures/
+
+# Word lock / temp files
+~$*
+
+# manuscript draft is binary (reviewed in Word/Box); keep only manuscript/figures/
+manuscript/*.docx
+
+# third-party published code (Miller 2011, Chambert 2015). Cite, do not redistribute.
+Miller_Chambert_models/
+
+# macOS
+.DS_Store
+
+# NOTE: data/*.rds are the scored simulation outputs (small, ~1 MB total). They
+# are KEPT under version control so the figures reproduce WITHOUT the multi-hour
+# rerun. Do not add them here.

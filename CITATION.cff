@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "fpcalib: calibration of a Bayesian false-positive occupancy model under detection heterogeneity"
+abstract: >-
+  Simulation-based calibration of a Bayesian false-positive (misclassification)
+  single-season occupancy model fit in Stan, with a head-to-head comparison
+  against the frequentist occuFP estimator from unmarked.
+type: software
+version: 0.0.0.9000
+license: GPL-3.0
+authors:
+  - given-names: "Diogo B."
+    family-names: "Provete"
+    email: "dbprovete@gmail.com"
+# TODO before archiving:
+#   - add co-authors and their ORCIDs (do not invent identifiers)
+#   - add the Zenodo DOI once the release is archived, e.g.:
+#       doi: 10.5281/zenodo.XXXXXXX
+#       date-released: 2026-XX-XX

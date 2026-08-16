@@ -1,0 +1,109 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Helvetica,Arial,sans-serif;color:#20303a;width:1120px;padding:30px 34px 22px;background:#fff}
+.kick{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5f6f78;font-weight:700;margin-bottom:2px}
+.plab{font-weight:800;font-size:15px;margin:16px 0 10px;letter-spacing:.2px}
+.plab span{font-weight:500;color:#5f6f78;font-size:12.5px;margin-left:8px;letter-spacing:0}
+.badge{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 38px}
+/* panel A flow */
+.flow{display:flex;align-items:stretch;gap:0}
+.stg{flex:1;border:1px solid #dfe4e8;border-radius:10px;padding:11px 12px;display:flex;flex-direction:column;gap:8px;background:#fff}
+.stg.wide{flex:1.5}
+.st-h{display:flex;align-items:center;gap:9px}
+.st-t{font-size:13px;font-weight:800}
+.st-l{font-size:10.5px;color:#48555d;line-height:1.4}
+.arw{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#aab2b8}
+.stream{display:flex;align-items:center;gap:8px;border-left:3px solid #dfe4e8;padding:5px 8px;border-radius:0 6px 6px 0;background:#fafbfc}
+.stream .t{font-size:11px;font-weight:700}
+.stream .d{font-size:9.5px;color:#5f6f78}
+.stream.auto{border-left-color:#c8641e}
+.stream.ver{border-left-color:#2e6e5a}
+.model{display:flex;align-items:center;gap:8px;padding:5px 7px;border:1px solid #e6eaed;border-radius:7px;margin-top:2px}
+.model .t{font-size:11px;font-weight:700} .model .d{font-size:9.5px;color:#5f6f78}
+.stanbadge{background:#B2001D;color:#fff;font-weight:800;font-size:12px;letter-spacing:.3px;padding:3px 9px;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.rchip{background:#eef1f3;color:#41515a;font-weight:800;font-size:12px;font-family:Georgia,serif;padding:2px 9px;border-radius:6px;border:1px solid #dbe0e4}
+.rep{text-align:center;font-size:10.5px;color:#5f6f78;font-style:italic;margin-top:9px}
+/* panel B regimes */
+.regs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.reg{border:1px solid #dfe4e8;border-radius:10px;padding:11px 12px;display:flex;flex-direction:column;gap:7px}
+.reg.kill{border:1.5px solid #c8641e;box-shadow:0 0 0 3px rgba(200,100,30,.06)}
+.reg .rh{display:flex;align-items:center;gap:9px}
+.reg .n{font-size:9.5px;color:#5f6f78;letter-spacing:.5px;text-transform:uppercase;font-weight:700}
+.reg .h{font-size:13px;font-weight:800;line-height:1}
+.reg .t{font-size:10.5px;color:#48555d;line-height:1.4}
+.tally{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#41515a}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #dfe4e8;border-radius:20px;padding:4px 11px}
+.chip b{font-weight:800} .plus{color:#aab2b8;font-weight:800}
+.total{background:#20303a;color:#fff;border-radius:20px;padding:4px 13px;font-weight:800;font-size:11.5px}
+/* panel C */
+.outs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.out{border:1px solid #dfe4e8;border-radius:10px;padding:11px 13px;display:flex;gap:11px;align-items:flex-start}
+.out.key{border-left:4px solid #c8641e}
+.out .oh{font-size:12.5px;font-weight:800;margin-bottom:3px}
+.out .ot{font-size:10.5px;color:#48555d;line-height:1.46}
+.cap{font-size:10px;color:#939ca3;margin-top:16px;line-height:1.5;border-top:1px solid #e7ebee;padding-top:9px}
+.mono{font-variant-numeric:tabular-nums}
+</style></head><body>
+
+<div class="kick">Simulation design</div>
+<div class="plab">(a)<span>one replicate, end to end, repeated across the design</span></div>
+<div class="flow">
+  <div class="stg">
+    <div class="st-h"><div class="badge" style="background:#eef2f4;color:#20303a"><svg viewBox="0 0 512 512" width="20" height="20" fill="currentColor" aria-hidden="true" style="display:block"><path d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z"/></svg></div><div class="st-t">Known truth</div></div>
+    <div class="st-l"><b>&psi;, p11, p10, r11, b1</b><br>design: nsite, K, verified coverage</div>
+  </div>
+  <div class="arw">&#10142;</div>
+  <div class="stg wide">
+    <div class="st-h"><div class="badge" style="background:#eef2f4;color:#20303a"><svg viewBox="0 0 640 512" width="20" height="20" fill="currentColor" aria-hidden="true" style="display:block"><path d="M175 389.4c-9.8 16-15 34.3-15 53.1c-10 3.5-20.8 5.5-32 5.5c-53 0-96-43-96-96L32 64C14.3 64 0 49.7 0 32S14.3 0 32 0L96 0l64 0 64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 245.9-49 79.6zM96 64l0 96 64 0 0-96L96 64zM352 0L480 0l32 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 150.9L629.7 406.2c6.7 10.9 10.3 23.5 10.3 36.4c0 38.3-31.1 69.4-69.4 69.4l-309.2 0c-38.3 0-69.4-31.1-69.4-69.4c0-12.8 3.6-25.4 10.3-36.4L320 214.9 320 64c-17.7 0-32-14.3-32-32s14.3-32 32-32l32 0zm32 64l0 160c0 5.9-1.6 11.7-4.7 16.8L330.5 320l171 0-48.8-79.2c-3.1-5-4.7-10.8-4.7-16.8l0-160-64 0z"/></svg></div><div class="st-t"><code>simulate_fp()</code> &nbsp;two data streams</div></div>
+    <div class="stream auto"><span style="color:#c8641e"><svg viewBox="0 0 384 512" width="16" height="16" fill="currentColor" aria-hidden="true" style="display:block"><path d="M96 96l0 160c0 53 43 96 96 96s96-43 96-96l-80 0c-8.8 0-16-7.2-16-16s7.2-16 16-16l80 0 0-32-80 0c-8.8 0-16-7.2-16-16s7.2-16 16-16l80 0 0-32-80 0c-8.8 0-16-7.2-16-16s7.2-16 16-16l80 0c0-53-43-96-96-96S96 43 96 96zM320 240l0 16c0 70.7-57.3 128-128 128s-128-57.3-128-128l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40c0 89.1 66.2 162.7 152 174.4l0 33.6-48 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l72 0 72 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-48 0 0-33.6c85.8-11.7 152-85.3 152-174.4l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 24z"/></svg></span><div><div class="t">Automated occasions</div><div class="d">classifier; may fire when absent (false positive p10)</div></div></div>
+    <div class="stream ver"><span style="color:#2e6e5a"><svg viewBox="0 0 512 512" width="16" height="16" fill="currentColor" aria-hidden="true" style="display:block"><path d="M256 80C149.9 80 62.4 159.4 49.6 262c9.4-3.8 19.6-6 30.4-6c26.5 0 48 21.5 48 48l0 128c0 26.5-21.5 48-48 48c-44.2 0-80-35.8-80-80l0-16 0-48 0-48C0 146.6 114.6 32 256 32s256 114.6 256 256l0 48 0 48 0 16c0 44.2-35.8 80-80 80c-26.5 0-48-21.5-48-48l0-128c0-26.5 21.5-48 48-48c10.8 0 21 2.1 30.4 6C449.6 159.4 362.1 80 256 80z"/></svg></span><div><div class="t">Verified clips</div><div class="d">annotated by ear; certain, anchor p10</div></div></div>
+  </div>
+  <div class="arw">&#10142;</div>
+  <div class="stg wide">
+    <div class="st-h"><div class="badge" style="background:#eef2f4;color:#20303a"><svg viewBox="0 0 576 512" width="20" height="20" fill="currentColor" aria-hidden="true" style="display:block"><path d="M0 80C0 53.5 21.5 32 48 32l96 0c26.5 0 48 21.5 48 48l0 16 192 0 0-16c0-26.5 21.5-48 48-48l96 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-96 0c-26.5 0-48-21.5-48-48l0-16-192 0 0 16c0 1.7-.1 3.4-.3 5L272 288l96 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-96 0c-26.5 0-48-21.5-48-48l0-96c0-1.7 .1-3.4 .3-5L144 224l-96 0c-26.5 0-48-21.5-48-48L0 80z"/></svg></div><div class="st-t">Fit both models</div></div>
+    <div class="model"><span class="stanbadge">Stan</span><div><div class="t">Bayesian FP model</div><div class="d">HMC; latent state marginalized</div></div></div>
+    <div class="model"><span class="rchip">occuFP</span><div><div class="t">unmarked</div><div class="d">maximum likelihood</div></div></div>
+  </div>
+  <div class="arw">&#10142;</div>
+  <div class="stg">
+    <div class="st-h"><div class="badge" style="background:#eef2f4;color:#20303a"><svg viewBox="0 0 512 512" width="20" height="20" fill="currentColor" aria-hidden="true" style="display:block"><path d="M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg></div><div class="st-t">Score vs truth</div></div>
+    <div class="st-l">bias, RMSE, and <b>95% interval coverage</b><br>convergence, runtime</div>
+  </div>
+</div>
+<div class="rep">repeated for every design cell &nbsp;(100 replicates; 300 for the confusion sweep)</div>
+
+<div class="plab">(b)<span>what we vary: three false-positive regimes, then focused blocks</span></div>
+<div class="regs">
+  <div class="reg">
+    <div class="rh"><span style="color:#5f6f78"><svg viewBox="0 0 448 512" width="18" height="18" fill="currentColor" aria-hidden="true" style="display:block"><path d="M32 288c-17.7 0-32 14.3-32 32s14.3 32 32 32l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 288zm0-128c-17.7 0-32 14.3-32 32s14.3 32 32 32l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 160z"/></svg></span><div><div class="n">regime i</div><div class="h">Homogeneous</div></div></div>
+    <div class="t">p10 constant across sites: the model&rsquo;s own assumption.</div>
+    <svg viewBox="0 0 132 46" width="132" height="46"><line x1="6" y1="38" x2="128" y2="38" stroke="#c7ced3" stroke-width="1"/><line x1="6" y1="6" x2="6" y2="38" stroke="#c7ced3" stroke-width="1"/><circle cx="12.0" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="22.2" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="32.4" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="42.5" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="52.7" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="62.9" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="73.1" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="83.3" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="93.5" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="103.6" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="113.8" cy="30.0" r="2.1" fill="#5b6b74"/><circle cx="124.0" cy="30.0" r="2.1" fill="#5b6b74"/><text x="5" y="8" font-size="7.5" fill="#9aa3aa" text-anchor="start">p10</text><text x="128" y="45" font-size="7.5" fill="#9aa3aa" text-anchor="end">covariate x</text></svg>
+  </div>
+  <div class="reg">
+    <div class="rh"><span style="color:#5f6f78"><svg viewBox="0 0 640 512" width="18" height="18" fill="currentColor" aria-hidden="true" style="display:block"><path d="M274.9 34.3c-28.1-28.1-73.7-28.1-101.8 0L34.3 173.1c-28.1 28.1-28.1 73.7 0 101.8L173.1 413.7c28.1 28.1 73.7 28.1 101.8 0L413.7 274.9c28.1-28.1 28.1-73.7 0-101.8L274.9 34.3zM200 224a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM96 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 376a24 24 0 1 1 0-48 24 24 0 1 1 0 48zM352 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 120a24 24 0 1 1 0-48 24 24 0 1 1 0 48zm96 328c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-192c0-35.3-28.7-64-64-64l-114.3 0c11.6 36 3.1 77-25.4 105.5L320 413.8l0 34.2zM480 328a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg></span><div><div class="n">regime ii</div><div class="h">Unstructured (Beta)</div></div></div>
+    <div class="t">p10 varies at random, unrelated to the covariate.</div>
+    <svg viewBox="0 0 132 46" width="132" height="46"><line x1="6" y1="38" x2="128" y2="38" stroke="#c7ced3" stroke-width="1"/><line x1="6" y1="6" x2="6" y2="38" stroke="#c7ced3" stroke-width="1"/><circle cx="12.0" cy="34.4" r="2.1" fill="#5b6b74"/><circle cx="22.2" cy="22.3" r="2.1" fill="#5b6b74"/><circle cx="32.4" cy="41.0" r="2.1" fill="#5b6b74"/><circle cx="42.5" cy="25.6" r="2.1" fill="#5b6b74"/><circle cx="52.7" cy="43.6" r="2.1" fill="#5b6b74"/><circle cx="62.9" cy="19.0" r="2.1" fill="#5b6b74"/><circle cx="73.1" cy="36.6" r="2.1" fill="#5b6b74"/><circle cx="83.3" cy="45.4" r="2.1" fill="#5b6b74"/><circle cx="93.5" cy="20.8" r="2.1" fill="#5b6b74"/><circle cx="103.6" cy="33.3" r="2.1" fill="#5b6b74"/><circle cx="113.8" cy="16.8" r="2.1" fill="#5b6b74"/><circle cx="124.0" cy="40.6" r="2.1" fill="#5b6b74"/><text x="5" y="8" font-size="7.5" fill="#9aa3aa" text-anchor="start">p10</text><text x="128" y="45" font-size="7.5" fill="#9aa3aa" text-anchor="end">covariate x</text></svg>
+  </div>
+  <div class="reg kill">
+    <div class="rh"><span style="color:#c8641e"><svg viewBox="0 0 576 512" width="18" height="18" fill="currentColor" aria-hidden="true" style="display:block"><path d="M384 160c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0c17.7 0 32 14.3 32 32l0 160c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-82.7L342.6 374.6c-12.5 12.5-32.8 12.5-45.3 0L192 269.3 54.6 406.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160c12.5-12.5 32.8-12.5 45.3 0L320 306.7 466.7 160 384 160z"/></svg></span><div><div class="n">regime iii &middot; the damaging one</div><div class="h">Structured confusion</div></div></div>
+    <div class="t">p10 tracks the environmental covariate, as a soundalike species would.</div>
+    <svg viewBox="0 0 132 46" width="132" height="46"><line x1="6" y1="38" x2="128" y2="38" stroke="#c7ced3" stroke-width="1"/><line x1="6" y1="6" x2="6" y2="38" stroke="#c7ced3" stroke-width="1"/><circle cx="12.0" cy="34.0" r="2.1" fill="#c8641e"/><circle cx="22.2" cy="31.6" r="2.1" fill="#c8641e"/><circle cx="32.4" cy="29.2" r="2.1" fill="#c8641e"/><circle cx="42.5" cy="26.8" r="2.1" fill="#c8641e"/><circle cx="52.7" cy="24.4" r="2.1" fill="#c8641e"/><circle cx="62.9" cy="22.0" r="2.1" fill="#c8641e"/><circle cx="73.1" cy="19.6" r="2.1" fill="#c8641e"/><circle cx="83.3" cy="17.2" r="2.1" fill="#c8641e"/><circle cx="93.5" cy="14.8" r="2.1" fill="#c8641e"/><circle cx="103.6" cy="12.4" r="2.1" fill="#c8641e"/><circle cx="113.8" cy="10.0" r="2.1" fill="#c8641e"/><circle cx="124.0" cy="7.6" r="2.1" fill="#c8641e"/><line x1="12.0" y1="34.0" x2="124.0" y2="7.6" stroke="#c8641e" stroke-width="1.3" stroke-dasharray="3 2"/><text x="5" y="8" font-size="7.5" fill="#9aa3aa" text-anchor="start">p10</text><text x="128" y="45" font-size="7.5" fill="#9aa3aa" text-anchor="end">covariate x</text></svg>
+  </div>
+</div>
+<div class="tally">
+  <span class="chip"><b>Core</b> 3 regimes &times; 2 p10 &times; 2 coverage = <b>12</b></span><span class="plus">+</span>
+  <span class="chip"><svg viewBox="0 0 512 512" width="12" height="12" fill="#5f6f78" aria-hidden="true" style="display:block"><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg> <b>Boundary</b> p10&rarr;0 &nbsp;<b>2</b></span><span class="plus">+</span>
+  <span class="chip"><svg viewBox="0 0 448 512" width="12" height="12" fill="#5f6f78" aria-hidden="true" style="display:block"><path d="M342.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 178.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l80 80c12.5 12.5 32.8 12.5 45.3 0l160-160zm96 128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 402.7 54.6 297.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l256-256z"/></svg> <b>Coverage sweep</b> 0&ndash;50% &nbsp;<b>3</b></span><span class="plus">+</span>
+  <span class="chip" style="border-color:#c8641e;color:#c8641e"><svg viewBox="0 0 512 512" width="12" height="12" fill="#c8641e" aria-hidden="true" style="display:block"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zm-312 8l0 64c0 13.3 10.7 24 24 24s24-10.7 24-24l0-64c0-13.3-10.7-24-24-24s-24 10.7-24 24zm80-96l0 160c0 13.3 10.7 24 24 24s24-10.7 24-24l0-160c0-13.3-10.7-24-24-24s-24 10.7-24 24zm80 64l0 96c0 13.3 10.7 24 24 24s24-10.7 24-24l0-96c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg> <b>Confusion &times; verification</b> 50&ndash;90% &nbsp;<b>6</b></span>
+  <span class="plus">=</span><span class="total">23 cells</span>
+</div>
+
+<div class="plab">(c)<span>what the run answers</span></div>
+<div class="outs">
+  <div class="out"><div class="badge" style="background:#eef4f1;color:#2e6e5a"><svg viewBox="0 0 512 512" width="19" height="19" fill="currentColor" aria-hidden="true" style="display:block"><path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM256 416c35.3 0 64-28.7 64-64c0-17.4-6.9-33.1-18.1-44.6L366 161.7c5.3-12.1-.2-26.3-12.3-31.6s-26.3 .2-31.6 12.3L257.9 288c-.6 0-1.3 0-1.9 0c-35.3 0-64 28.7-64 64s28.7 64 64 64zM176 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM96 288a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm352-32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg></div><div><div class="oh">Calibrated only when homogeneous</div><div class="ot">Under the model&rsquo;s assumption, bias &asymp; 0 and coverage &asymp; 0.95 for both frameworks.</div></div></div>
+  <div class="out"><div class="badge" style="background:#f3eef0;color:#B2001D"><svg viewBox="0 0 512 512" width="19" height="19" fill="currentColor" aria-hidden="true" style="display:block"><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg></div><div><div class="oh">Heterogeneity misleads both</div><div class="ot">Under confusion both collapse and bias the slope toward zero; the Bayesian interval exposes it, the point estimate does not.</div></div></div>
+  <div class="out key"><div class="badge" style="background:#faf0e9;color:#c8641e"><svg viewBox="0 0 512 512" width="19" height="19" fill="currentColor" aria-hidden="true" style="display:block"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zm-312 8l0 64c0 13.3 10.7 24 24 24s24-10.7 24-24l0-64c0-13.3-10.7-24-24-24s-24 10.7-24 24zm80-96l0 160c0 13.3 10.7 24 24 24s24-10.7 24-24l0-160c0-13.3-10.7-24-24-24s-24 10.7-24 24zm80 64l0 96c0 13.3 10.7 24 24 24s24-10.7 24-24l0-96c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg></div><div><div class="oh">Verifying more does not rescue it</div><div class="ot">From 10% to 90% of sites verified, coverage of the covariate effect stays low: the structure must be modelled, not annotated away.</div></div></div>
+</div>
+
+<div class="cap">Synthetic data are self-contained: the simulation generates its own truth. The nightjar dataset serves only as the empirical example and to set realistic parameter ranges, not as input to the simulation.</div>
+</body></html>

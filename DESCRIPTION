@@ -1,0 +1,32 @@
+Package: fpcalib
+Title: Calibration of a Bayesian False-Positive Occupancy Model under Detection Heterogeneity
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Diogo B.", "Provete", email = "dbprovete@gmail.com", role = c("aut", "cre")))
+    # TODO: add co-authors and ORCIDs before submission (do not invent identifiers)
+Description: Simulation-based calibration of a Bayesian false-positive
+    (misclassification) single-season occupancy model fit in Stan, with a
+    head-to-head comparison against the frequentist occuFP estimator from
+    unmarked. The package simulates acoustic occupancy data under homogeneous,
+    unstructured (Beta), and structured ("confusion species") false-positive
+    regimes, fits both models to each dataset, and scores 95% interval coverage
+    and bias for the false-positive rate (p10), nightly use (psi), and the
+    occupancy slope (b1). Supporting material for the JAV-03737 software note.
+License: GPL-3
+Encoding: UTF-8
+Depends:
+    R (>= 4.2)
+Imports:
+    cmdstanr,
+    unmarked,
+    purrr,
+    dplyr,
+    tidyr
+Suggests:
+    furrr,
+    future,
+    posterior,
+    ggplot2,
+    patchwork,
+    DiagrammeR
+Additional_repositories: https://stan-dev.r-universe.dev
