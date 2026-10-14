@@ -1,5 +1,5 @@
 # =============================================================================
-# 04_confusion_intensity.R
+# 05_confusion_intensity.R
 # Where does the constant-p10 correction stop protecting the occupancy slope?
 #
 # Clare et al. (2021) found the constant-FP correction nearly unbiased under

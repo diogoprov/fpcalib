@@ -80,6 +80,7 @@ fraction of sites verified:
 | `03_run_fix_arm.R` | false-positive rate modelled on the occupancy covariate, in Stan and in `occuFP`, for the structured-confusion cells, plus two cells in which false positives depend on that covariate exactly; 100 replicates per cell | `data/fp_fix_*.rds` |
 | `04_positive_control.R` | false-positive rate modelled on the confusing gradient w and on a noisy proxy of it (correlation 0.7), refitted to the first 100 datasets of every structured-confusion cell of `01` and paired with those fits | `data/fp_positive_control_*.rds` |
 | `05_confusion_intensity.R` | strength (0.25, 0.5, 1.0, 1.5) × correlation (0.3, 0.7, 1.0) of the confusion, at a rate of 0.05 with 30% verified; constant-rate model in both frameworks; 100 replicates per cell | `data/fp_intensity_*.rds` |
+| `06_manuscript_figures.R` | Figures 6 (coverage of b1 against verification, four models) and 7 (bias and coverage across the intensity grid), from the summaries only | `manuscript/figures/fig6_*`, `fig7_*` |
 
 All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,
 with a target acceptance rate of 0.95, parallelized across fits with **furrr**.
