@@ -1,0 +1,92 @@
+digraph fp_dag {
+
+  graph [rankdir=TB, fontname=Helvetica, bgcolor=white,
+         nodesep=0.45, ranksep=0.7, pad=0.35, newrank=true]
+  node  [fontname=Helvetica, fontsize=12]
+  edge  [color="#5F6B7A", arrowsize=0.8, fontname=Helvetica]
+
+  # ---------------- Priors ----------------
+  node [shape=hexagon, style=filled, fillcolor="#EDE7F6",
+        color="#7B1FA2", fontcolor="#4A148C"]
+  P_beta  [label=<<TABLE BORDER="0" CELLSPACING="2"><TR><TD>β<SUB>0</SUB> ~ N(0, 1.5<SUP>2</SUP>)</TD></TR><TR><TD>β<SUB>1</SUB> ~ N(0, 2.5<SUP>2</SUP>)</TD></TR></TABLE>>]
+  P_alpha [label=<<TABLE BORDER="0" CELLSPACING="2"><TR><TD>α<SUB>0</SUB> ~ N(0, 1.5<SUP>2</SUP>)</TD></TR><TR><TD>α<SUB>BIO</SUB>, α<SUB>ACI</SUB> ~ N(0, 2.5<SUP>2</SUP>)</TD></TR></TABLE>>]
+  P_sig   [label=<σ<SUB>u</SUB> ~ N<SUP>+</SUP>(0, 2<SUP>2</SUP>)>]
+  P_fp    [label=<<TABLE BORDER="0" CELLSPACING="2"><TR><TD>Δ ~ N<SUP>+</SUP>(2, 1.5<SUP>2</SUP>)</TD></TR><TR><TD>γ<SUB>FP</SUB> ~ N(0, 2.5<SUP>2</SUP>)</TD></TR></TABLE>>]
+  P_delta [label=<δ<SUB>0</SUB> ~ N(0, 1.5<SUP>2</SUP>)>]
+
+  # ---------------- Parameters ----------------
+  node [shape=ellipse, style=filled, fillcolor="#FFF9C4",
+        color="#F9A825", fontcolor="#212121"]
+  beta  [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>β<SUB>0</SUB>, β<SUB>1</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">nightly use</FONT></TD></TR></TABLE>>]
+  alpha [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>α<SUB>0</SUB>, α<SUB>BIO</SUB>, α<SUB>ACI</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">true detection</FONT></TD></TR></TABLE>>]
+  sig   [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>σ<SUB>u</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">recorder SD</FONT></TD></TR></TABLE>>]
+  fp    [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>Δ, γ<SUB>FP</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">false positive</FONT></TD></TR></TABLE>>]
+  delta [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>δ<SUB>0</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">verified detection</FONT></TD></TR></TABLE>>]
+
+  # ---------------- Observed covariates ----------------
+  node [shape=rect, style=filled, fillcolor="#E3F2FD",
+        color="#1565C0", fontcolor="#0D47A1"]
+  X [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>x<SUB>i</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">occupancy covariate</FONT></TD></TR></TABLE>>]
+  A [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>BIO<SUB>ik</SUB>, ACI<SUB>ik</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">acoustic indices</FONT></TD></TR></TABLE>>]
+  W [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>W<SUB>i</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">false-positive covariate (optional)</FONT></TD></TR></TABLE>>,
+     style="filled,dashed"]
+
+  # ---------------- Latent / linear predictors ----------------
+  node [shape=ellipse, style=filled, fillcolor="#E8F5E9",
+        color="#2E7D32", fontcolor="#1B5E20"]
+  u     [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>u<SUB>j</SUB></TD></TR><TR><TD><FONT POINT-SIZE="10">recorder effect, j = 1…J</FONT></TD></TR></TABLE>>]
+  e_psi [label=<logit ψ<SUB>i</SUB> = β<SUB>0</SUB> + β<SUB>1</SUB>x<SUB>i</SUB>>]
+  e_p11 [label=<logit p<SUB>11,ik</SUB> = α<SUB>0</SUB> + α<SUB>BIO</SUB>BIO<SUB>ik</SUB> + α<SUB>ACI</SUB>ACI<SUB>ik</SUB> + u<SUB>j[i]</SUB>>]
+  e_p10 [label=<logit p<SUB>10,i</SUB> = α<SUB>0</SUB> − Δ + γ<SUB>FP</SUB>W<SUB>i</SUB>>]
+  e_r11 [label=<logit r<SUB>11</SUB> = δ<SUB>0</SUB>>]
+  z     [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>z<SUB>i</SUB> ~ Bernoulli(ψ<SUB>i</SUB>)</TD></TR><TR><TD><FONT POINT-SIZE="10">nightly use, site-night i = 1…N (marginalized)</FONT></TD></TR></TABLE>>,
+         penwidth=2.6]
+
+  # ---------------- Responses ----------------
+  node [shape=doubleoctagon, style=filled, fillcolor="#FFECB3",
+        color="#E65100", fontcolor="#BF360C"]
+  Ya [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>y<SUP>aut</SUP><SUB>ik</SUB> ~ Bernoulli(z<SUB>i</SUB>p<SUB>11,ik</SUB> + (1 − z<SUB>i</SUB>)p<SUB>10,i</SUB>)</TD></TR><TR><TD><FONT POINT-SIZE="10">classifier detections, may be false</FONT></TD></TR></TABLE>>]
+  Yv [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="1" CELLPADDING="1"><TR><TD>y<SUP>ver</SUP><SUB>im</SUB> ~ Bernoulli(z<SUB>i</SUB>r<SUB>11</SUB>)</TD></TR><TR><TD><FONT POINT-SIZE="10">verified clips, certain</FONT></TD></TR></TABLE>>]
+
+  # ---------------- Edges: priors -> parameters ----------------
+  P_beta  -> beta  [style=dashed, color="#9C27B0"]
+  P_alpha -> alpha [style=dashed, color="#9C27B0"]
+  P_sig   -> sig   [style=dashed, color="#9C27B0"]
+  P_fp    -> fp    [style=dashed, color="#9C27B0"]
+  P_delta -> delta [style=dashed, color="#9C27B0"]
+
+  # ---------------- Edges: latent structure ----------------
+  sig -> u [color="#2E7D32"]
+
+  # ---------------- Edges: linear predictors ----------------
+  beta  -> e_psi
+  X     -> e_psi [color="#1565C0"]
+  alpha -> e_p11
+  A     -> e_p11 [color="#1565C0"]
+  u     -> e_p11 [color="#2E7D32"]
+  alpha -> e_p10 [label=<  α<SUB>0</SUB>>, fontsize=10, fontcolor="#5F6B7A"]
+  fp    -> e_p10 [label=<  Δ &gt; 0 keeps p<SUB>11</SUB> &gt; p<SUB>10</SUB> at W = 0>, fontsize=10, fontcolor="#5F6B7A"]
+  W     -> e_p10 [color="#1565C0", style=dashed]
+  delta -> e_r11
+  e_psi -> z    [color="#2E7D32"]
+
+  # ---------------- Edges: responses ----------------
+  z     -> Ya [color="#E65100", penwidth=1.6]
+  e_p11 -> Ya [color="#E65100"]
+  e_p10 -> Ya [color="#E65100", label=<  if z<SUB>i</SUB> = 0>, fontsize=10, fontcolor="#E65100"]
+  z     -> Yv [color="#E65100", penwidth=1.6]
+  e_r11 -> Yv [color="#E65100"]
+
+  # ---------------- Ranks and column order ----------------
+  {rank=source; P_delta; P_beta; P_sig; P_alpha; P_fp}
+  {rank=same;   delta; beta; sig; alpha; fp}
+  {rank=same;   X; u; A; W}
+  {rank=same;   e_r11; e_psi; e_p11; e_p10}
+  {rank=same;   z}
+  {rank=sink;   Yv; Ya}
+  P_delta -> P_beta -> P_sig -> P_alpha -> P_fp [style=invis]
+  delta -> beta -> sig -> alpha -> fp           [style=invis]
+  X -> u -> A -> W                              [style=invis]
+  e_r11 -> e_psi -> e_p11 -> e_p10              [style=invis]
+  Yv -> Ya                                      [style=invis]
+}
