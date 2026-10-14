@@ -1,19 +1,38 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "fpcalib: calibration of a Bayesian false-positive occupancy model under detection heterogeneity"
+title: "Verifying more is not enough when false positives track the environmental gradient in occupancy models"
 abstract: >-
-  Simulation-based calibration of a Bayesian false-positive (misclassification)
-  single-season occupancy model fit in Stan, with a head-to-head comparison
-  against the frequentist occuFP estimator from unmarked.
+  Research compendium (fpcalib) for a simulation study of a Bayesian
+  multiple-methods false-positive occupancy model fitted in Stan, compared
+  with the frequentist occuFP estimator from unmarked. It simulates acoustic
+  detection data under homogeneous, unstructured, and structured
+  false-positive regimes with partial verification, scores the 95% interval
+  coverage and bias of the occupancy slope, and tests whether modelling the
+  false-positive rate as a function of site covariates restores calibration.
 type: software
-version: 0.0.0.9000
+version: 0.1.0
 license: GPL-3.0
+repository-code: "https://github.com/diogoprov/fpcalib"
+keywords:
+  - occupancy models
+  - false positives
+  - passive acoustic monitoring
+  - Bayesian calibration
+  - Stan
 authors:
   - given-names: "Diogo B."
     family-names: "Provete"
     email: "dbprovete@gmail.com"
-# TODO before archiving:
-#   - add co-authors and their ORCIDs (do not invent identifiers)
-#   - add the Zenodo DOI once the release is archived, e.g.:
-#       doi: 10.5281/zenodo.XXXXXXX
-#       date-released: 2026-XX-XX
+    orcid: "https://orcid.org/0000-0002-0097-0651"
+  - given-names: "Tessa"
+    family-names: "Rhinehart"
+    orcid: "https://orcid.org/0000-0002-4352-3464"
+  - given-names: "Liliana"
+    family-names: "Piatti"
+    orcid: "https://orcid.org/0000-0001-6324-1723"
+  - given-names: "Larissa S. M."
+    family-names: "Sugai"
+    orcid: "https://orcid.org/0000-0002-6248-291X"
+# After the Zenodo release, add:
+#   doi: 10.5281/zenodo.<concept record>
+#   date-released: YYYY-MM-DD

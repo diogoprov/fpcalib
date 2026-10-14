@@ -1,9 +1,12 @@
 Package: fpcalib
 Title: Calibration of a Bayesian False-Positive Occupancy Model under Detection Heterogeneity
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
-    person("Diogo B.", "Provete", email = "dbprovete@gmail.com", role = c("aut", "cre")))
-    # TODO: add co-authors and ORCIDs before submission (do not invent identifiers)
+    person("Diogo B.", "Provete", email = "dbprovete@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0097-0651")),
+    person("Tessa", "Rhinehart", role = "aut", comment = c(ORCID = "0000-0002-4352-3464")),
+    person("Liliana", "Piatti", role = "aut", comment = c(ORCID = "0000-0001-6324-1723")),
+    person("Larissa S. M.", "Sugai", role = "aut", comment = c(ORCID = "0000-0002-6248-291X")))
 Description: Simulation-based calibration of a Bayesian false-positive
     (misclassification) single-season occupancy model fit in Stan, with a
     head-to-head comparison against the frequentist occuFP estimator from
@@ -11,7 +14,8 @@ Description: Simulation-based calibration of a Bayesian false-positive
     unstructured (Beta), and structured ("confusion species") false-positive
     regimes, fits both models to each dataset, and scores 95% interval coverage
     and bias for the false-positive rate (p10), nightly use (psi), and the
-    occupancy slope (b1). Supporting material for the JAV-03737 software note.
+    occupancy slope (b1). Research compendium for the manuscript "Verifying more is not enough when false
+    positives track the environmental gradient in occupancy models".
 License: GPL-3
 Encoding: UTF-8
 Depends:

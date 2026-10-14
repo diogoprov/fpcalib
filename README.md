@@ -1,47 +1,107 @@
 # fpcalib
 
-Calibration of a Bayesian false-positive occupancy model under detection heterogeneity.
+Research compendium for the manuscript
 
-This is a research compendium, not yet a full package: it holds the model, the
-simulation code, and the scripts that reproduce every figure in the software
-note that accompanies JAV-03737. The question it answers is narrow and
-practical: when the false-positive rate of an automated acoustic classifier
-varies across sites, do the model's 95% intervals still contain the truth 95% of
-the time? The answer depends on how that variation is structured, and the
-compendium quantifies it.
+> Provete, D. B., Rhinehart, T., Piatti, L., & Sugai, L. S. M. *Verifying more
+> is not enough when false positives track the environmental gradient in
+> occupancy models* (working title), in preparation for *Methods in Ecology and
+> Evolution*.
 
-## What is inside
+It holds the models, the simulation code, the scored outputs, and the scripts
+that reproduce the results and figures. The question is practical: automated
+acoustic classifiers return false positives, and the multiple-methods
+false-positive occupancy model corrects for them with a subset of verified
+detections, assuming a constant false-positive rate. Does that correction keep
+the 95% intervals of the environmental effect honest when the false-positive
+rate varies among sites, and in particular when it tracks the same gradient as
+the species?
 
-The Bayesian false-positive (misclassification) single-season occupancy model
-follows the multiple-detection-method design of Miller et al. (2011), fit in
-Stan and marginalized over the latent occupancy state. A subset of verified
-recordings anchors the false-positive rate. The compendium simulates data from
-this model under three false-positive regimes, fits both the Stan model and the
-frequentist `occuFP` estimator from `unmarked` to each dataset, and scores 95%
-interval coverage and bias for three quantities: the false-positive rate
-(`p10`), nightly use (`psi`), and the occupancy slope (`b1`, the effect of the
-environmental covariate).
+The reusable model, with a formula interface, simulation, and calibration
+checks, is the R package **crywolf** (https://github.com/diogoprov/crywolf).
+This compendium stays frozen at the code that produced the results of the
+manuscript.
+
+## The model
+
+A Bayesian single-season occupancy model with false positives, following the
+multiple-detection-method (site-confirmation) design of Miller et al. (2011),
+written in Stan with the latent occupancy state marginalized. Classifier
+detections may be false positives; verified clips are certain and anchor the
+false-positive rate. A positive gap between the true- and false-positive
+intercepts prevents label switching. The false-positive rate is either
+constant or a function of site covariates. Each dataset is also fitted with the
+frequentist `occuFP` estimator from **unmarked**.
 
 ## Repository layout
 
 ```
 fpcalib/
-├── DESCRIPTION            package-style metadata (name, deps, license)
-├── README.md             this file
-├── LICENSE.md            GPL-3
-├── CITATION.cff          citation metadata (add the Zenodo DOI at archiving)
-├── .Rprofile             renv activation stub
+├── DESCRIPTION, LICENSE.md, CITATION.cff, .Rprofile (renv stub)
+├── AI_INTERACTION_LOG.md          record of the human-AI collaboration
 ├── inst/stan/
-│   ├── fp_occupancy_priors_v2.stan   the model used for the simulation
-│   └── fp_occupancy.stan             the manuscript-priors version
+│   ├── fp_occupancy_re_toggle.stan   constant false-positive rate (main study)
+│   ├── fp_occupancy_fpcov.stan       false-positive rate on site covariates (Kfp = 0 recovers the constant model)
+│   ├── fp_occupancy_priors_v2.stan   model of the empirical nightjar analysis (JAV-03737), revised priors
+│   └── fp_occupancy.stan             the same, original priors
 ├── R/
-│   ├── fp_sim_pilot.R                simulate_fp(), fit_both(), run_pilot(), summarise_pilot()
-│   └── figs_didaticas_curiango.R     coverage-caterpillar and flow-diagram helpers
-├── analysis/
-│   ├── 01_run_simulation.R           reproduce the 100-replicate study
-│   └── 02_make_figures.R             regenerate the coverage figures
-└── data/                             scored outputs (written by 01)
+│   ├── fp_sim_pilot.R          simulate_fp(), fit_both(), run_pilot(), summarise_pilot()
+│   ├── fp_fix.R                fit_fix(), run_fix(), summarise_fix(): false-positive rate on the occupancy covariate
+│   ├── fp_positive_control.R   fit_fpcov(), run_positive_control(), pair_with_constant()
+│   ├── fp_diagnostics.R        fp_calibration_check(), how_much_to_verify()
+│   ├── fig_dag.R, fig_dag_v2.R model DAG
+│   └── figs_didaticas_curiango.R
+├── analysis/                   scripts, run in order from the compendium root
+├── data/                       scored outputs (.rds), kept under version control
+└── manuscript/
+    ├── figures/                manuscript figures and the scripts that draw them
+    └── fpcalib_vs_simFPOcc.md  comparison with the simFPOcc framework
 ```
+
+## The simulation design
+
+Every dataset has 300 sites, 20 classifier occasions per site, occupancy
+probability 0.5 at the mean of the covariate, true-detection probability 0.6,
+and an environmental effect (occupancy slope) of −0.8. Three false-positive
+regimes are crossed with two base false-positive rates (0.05 and 0.20) and the
+fraction of sites verified:
+
+1. **Homogeneous:** the same false-positive rate at every site, as the model
+   assumes.
+2. **Unstructured:** the rate varies at random among sites (Beta, concentration
+   2), unrelated to the covariate.
+3. **Structured confusion:** the logit of the rate rises along a latent gradient
+   w (effect 1.5) correlated at 0.7 with the occupancy covariate, as when an
+   acoustically similar species tracks the same gradient.
+
+| Script | What it does | Output |
+|---|---|---|
+| `01_run_simulation.R` | main study: 23 cells (the 3 regimes × 2 rates × 10% and 30% verified, two near-boundary cells at a rate of 0.01, a verification sweep at 0%, 5%, and 50%, and structured confusion at 50%, 70%, and 90% verified); 100 replicates per cell, 300 for the structured-confusion cells; constant-rate Stan model and `occuFP` | `data/fp_sim_results.rds`, `data/fp_sim_summary.rds` |
+| `02_make_figures.R` | coverage figures from the saved results | `analysis/figures/` |
+| `03_run_fix_arm.R` | false-positive rate modelled on the occupancy covariate, in Stan and in `occuFP`, for the structured-confusion cells, plus two cells in which false positives depend on that covariate exactly; 100 replicates per cell | `data/fp_fix_*.rds` |
+| `04_positive_control.R` | false-positive rate modelled on the confusing gradient w and on a noisy proxy of it (correlation 0.7), refitted to the first 100 datasets of every structured-confusion cell of `01` and paired with those fits | `data/fp_positive_control_*.rds` |
+| `05_confusion_intensity.R` | strength (0.25, 0.5, 1.0, 1.5) × correlation (0.3, 0.7, 1.0) of the confusion, at a rate of 0.05 with 30% verified; constant-rate model in both frameworks; 100 replicates per cell | `data/fp_intensity_*.rds` |
+
+All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,
+with a target acceptance rate of 0.95, parallelized across fits with **furrr**.
+Each replicate draws from a stored seed, so scripts 03 to 05 can regenerate the
+datasets of the main run; `04` stops if they do not match.
+
+## What the study shows
+
+- With homogeneous false positives, both frameworks are calibrated.
+- With unstructured heterogeneity, the false-positive rate is estimated poorly,
+  but the environmental effect is largely spared.
+- With structured confusion, the 95% interval of the environmental effect
+  contains the truth in only 8–20% of replicates at a base rate of 0.05 and in
+  none at 0.20, the effect is pulled towards zero, and verifying up to 90% of
+  the sites does not fix it.
+- Modelling the false-positive rate on the confusing gradient restores nominal
+  coverage (0.90–0.97). Modelling it on the occupancy covariate, which a user
+  always has, recovers part of it (0.48–0.66 and 0.08–0.48 at the two rates)
+  and improves with verification; when false positives depend on that
+  covariate exactly, the recovery is complete.
+- Weak confusion (an effect of 0.5 or less on the logit scale) leaves the
+  constant-rate correction calibrated at every correlation tested.
 
 ## Reproducing the study
 
@@ -52,57 +112,25 @@ install.packages(c("purrr", "dplyr", "tidyr", "furrr", "future",
                    "posterior", "unmarked", "ggplot2", "patchwork"))
 install.packages("cmdstanr",
                  repos = c("https://stan-dev.r-universe.dev", getOption("repos")))
-cmdstanr::install_cmdstan()   # builds CmdStan; record the version in this README
+cmdstanr::install_cmdstan()
 ```
 
-Then, from the compendium root:
-
-```r
-source("analysis/01_run_simulation.R")   # runs the simulation, writes data/*.rds
-source("analysis/02_make_figures.R")     # writes analysis/figures/*.pdf
-```
-
-Pinning the exact package versions with `renv::init()` is recommended before
-archiving (see `.Rprofile`). CmdStan is installed separately, so note its
-version here for the record: CmdStan __._._ .
-
-## The simulation design
-
-Twelve cells cross three false-positive regimes with two true `p10` levels
-(0.05 and 0.20) and two verification-coverage levels (10% and 30% of site-visits
-verified), 100 replicates each. Every cell fixes nightly use `psi` = 0.5, true
-detection `p11` = 0.6, and the true environmental effect `b1` = −0.8. The three
-regimes are:
-
-(i) homogeneous, where every site shares the same false-positive rate (the
-model's assumption); (ii) unstructured (Beta), where the rate varies at random
-across sites with no relation to the covariate; and (iii) structured confusion,
-where the rate is correlated with the environmental covariate itself, as when an
-acoustically similar species tracks the same gradient.
-
-An optional near-boundary arm (`p10` = 0.01, commented in
-`01_run_simulation.R`) reproduces the degeneracy that `occuFP` shows on real
-data, where the frequentist maximum-likelihood fit sits on the boundary and its
-Hessian goes singular.
-
-## What the study shows
-
-The headline numbers live in `data/fp_sim_100reps_summary.rds`; the short
-version is a three-step story. Under homogeneity both models are well-calibrated.
-Under unstructured heterogeneity the false-positive rate is estimated poorly
-(its interval coverage collapses) but the environmental effect is largely
-spared. Under structured confusion both parameters fail and the environmental
-effect is biased toward zero, so a real effect can be read as absent. Where
-`occuFP` converges it is biased in the same direction as the Bayesian model; the
-difference is that the Bayesian interval reveals the damage through its coverage,
-whereas the frequentist point estimate does not.
+The results were produced with CmdStan 2.39.0 and cmdstanr 0.9.0. Then, from
+the compendium root, run the scripts in `analysis/` in numerical order. The
+full set takes many hours on a multi-core machine; the scored `.rds` files in
+`data/` let you regenerate the summaries and figures without rerunning the
+simulations. Scripts 04 and 05 start with a short smoke test.
 
 ## Citing
 
-See `CITATION.cff`. The Zenodo DOI is added when the release is archived. Full
-references for the model and the study system are in the accompanying
-manuscript.
+See `CITATION.cff`. A DOI will be added when the release is archived on
+Zenodo.
+
+Miller, D. A., Nichols, J. D., McClintock, B. T., Grant, E. H. C., Bailey,
+L. L., & Weir, L. A. (2011). Improving occupancy estimation when two types of
+observational error occur: non-detection and species misidentification.
+*Ecology*, 92, 1422–1428. https://doi.org/10.1890/10-1396.1
 
 ## License
 
-GPL-3, chosen because the package imports `unmarked` (GPL). See `LICENSE.md`.
+GPL-3, because the code imports **unmarked** (GPL). See `LICENSE.md`.
