@@ -161,6 +161,7 @@ simulate_fp <- function(nsite            = 500,   # occupancy sites (site-nights
 
   list(
     stan_data = stan_data,
+    w     = w,                                      # confusion gradient (all 0 unless conf_effect != 0); used by the positive control
     umf   = list(y = y_umf, siteCovs = siteCovs, obsCovs = obsCovs,
                  type = c(n_verified, K, 0)),
     truth = list(psi = psi, b0 = b0, b1 = b1, p11 = p11, p10 = p10, r11 = r11,
