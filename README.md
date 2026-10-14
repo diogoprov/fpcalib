@@ -1,5 +1,7 @@
 # fpcalib
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23379099.svg)](https://doi.org/10.5281/zenodo.23379099)
+
 Research compendium for the manuscript
 
 > Provete, D. B., Rhinehart, T., Piatti, L., & Sugai, L. S. M. *Verifying more
@@ -124,8 +126,9 @@ simulations. Scripts 04 and 05 start with a short smoke test.
 
 ## Citing
 
-See `CITATION.cff`. A DOI will be added when the release is archived on
-Zenodo.
+Please cite the archived version of this compendium,
+doi:[10.5281/zenodo.23379099](https://doi.org/10.5281/zenodo.23379099), and the manuscript once published. The
+full citation metadata are in `CITATION.cff`.
 
 Miller, D. A., Nichols, J. D., McClintock, B. T., Grant, E. H. C., Bailey,
 L. L., & Weir, L. A. (2011). Improving occupancy estimation when two types of

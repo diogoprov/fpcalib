@@ -11,8 +11,14 @@ abstract: >-
   false-positive rate as a function of site covariates restores calibration.
 type: software
 version: 0.1.0
+doi: 10.5281/zenodo.23379099
+date-released: 2026-10-14
 license: GPL-3.0
 repository-code: "https://github.com/diogoprov/fpcalib"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23379099
+    description: "Zenodo archive of the compendium"
 keywords:
   - occupancy models
   - false positives
@@ -33,6 +39,3 @@ authors:
   - given-names: "Larissa S. M."
     family-names: "Sugai"
     orcid: "https://orcid.org/0000-0002-6248-291X"
-# After the Zenodo release, add:
-#   doi: 10.5281/zenodo.<concept record>
-#   date-released: YYYY-MM-DD
