@@ -34,3 +34,4 @@ Miller_Chambert_models/
 # are KEPT under version control so the figures reproduce WITHOUT the multi-hour
 # rerun. Do not add them here.
 data/revision_jobs/
+data/obsconfirm_jobs/
