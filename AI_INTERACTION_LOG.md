@@ -156,6 +156,25 @@ that the outputs were reviewed rather than accepted.*
   deleting a reference is a content decision and a tracked paragraph move
   produces an unreadable redline.
 
+## Session summary — 2026-10-24/26 (revision of the MEE manuscript)
+
+*Several Claude Code sessions worked in parallel (manuscript revision, crywolf
+development, and the overnight runs), coordinated by message. The manuscript
+session ran on `claude-opus-5-5`. Every numerical claim written into the
+manuscript was checked against the stored results, and each block of new text
+was sent to an independent review agent, given the code and data rather than
+the conclusions, before the manuscript was regenerated. Manuscript edits were
+tracked changes under the author name "Claude".*
+
+| Date | Task (AIdIT area) | AI role | Human decision / verification | Output artifact |
+|---|---|---|---|---|
+| 2026-10-24 | Revision checks (formal analysis) | Wrote the refits of items 1 to 3 with crywolf and the observation-confirmation run (item 4), regenerating the original datasets from their seeds and stopping if they differed | You chose the items, asked for the runs overnight, and scheduled them | `R/fp_revision.R`, `analysis/07_revision_checks.R`, `analysis/08_observation_confirmation.R`, `analysis/09_revision_summary.R` |
+| 2026-10-25 | Reading the runs (validation) | Checked failures, divergences, R-hat and ESS before interpreting; flagged the poor mixing of the site random effect on the false-positive rate (R-hat > 1.01 in 29–60% of fits) and treated its coverage as provisional | Independent review agents re-derived every number from the stored results; their corrections (overreach in the comparison with Clare et al. 2021, an unfair effort comparison, an Abstract claim) were applied | `data/fp_revision_results.rds`, `data/fp_obsconfirm_results.rds` |
+| 2026-10-25 | Weaker confusion under observation confirmation (formal analysis) | Proposed the run as the most useful optional check, wrote it from 08 changing only the cells, seeds and outputs, and scheduled it to start only when other sessions were not using the cores | You asked for it to be run and included | `analysis/10_obsconfirm_weak.R`, `data/fp_obsconfirm_weak_results.rds` |
+| 2026-10-25 | A queue deadlock (process) | An AI waiting loop matched its own command line with `pgrep -f`, which blocked the queued jobs of another session | The other session diagnosed it and, with your approval, started the stalled job; waiting loops now wait on process ids | — |
+| 2026-10-25 | Simulation scheme (visualisation) | Added panel d (observation confirmation) and marked the revision refits in panel c, from v4 without redrawing it | You asked whether the new runs changed the figure | `manuscript/figures/Fig1_simulation_scheme_v5.*`, `make_scheme_v5.py` |
+| 2026-10-26 | Release 0.2.0 (process) | Prepared the commits, the version bump and the release plan | You approved committing; push and release only after you approved the plan | this file, `README.md`, `CITATION.cff` |
+
 ## What to keep, to report later (checklist)
 
 - [ ] Exported transcript of the session(s), stored with the project

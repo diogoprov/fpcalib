@@ -26,4 +26,29 @@ run in seconds without them.
 6. `06_manuscript_figures.R`: Figures 6 and 7 of the manuscript from the
    summaries of 01, 03, 04, and 05.
 
+7. `07_revision_checks.R`: checks added in the revision of the manuscript,
+   refitted with the R package crywolf to the first 100 datasets of 17 cells of
+   01, regenerated from their seeds and checked against the original run: the
+   cost of the occupancy covariate in the false-positive process when false
+   positives are homogeneous, a site random effect on the false-positive rate
+   under unstructured heterogeneity, and whether leave-one-site-out
+   cross-validation and a posterior predictive check reveal structured
+   confusion. Writes `data/fp_revision_results.rds`.
+8. `08_observation_confirmation.R`: structured confusion (effect 1.5) under the
+   observation-confirmation design, with 5%, 10% or 30% of the automated
+   occasions checked, plus two homogeneous cells. Writes
+   `data/fp_obsconfirm_results.rds`.
+9. `09_revision_summary.R`: summaries, tables and figures of 07, 08 and 10.
+   Writes `data/fp_revision_summary.rds`, `analysis/tables/` and
+   `analysis/figures/` (the last two not tracked by git).
+10. `10_obsconfirm_weak.R`: the design of 08 at the weaker confusion effects
+    0.5 and 1.0. Writes `data/fp_obsconfirm_weak_results.rds`.
+
+Scripts 07, 08 and 10 use crywolf 1.9.0.9000 (commit a5d2516 of
+https://github.com/diogoprov/crywolf), whose Stan programs and fitting,
+simulation and checking functions are those of release 1.9.0. crywolf is not in
+`renv.lock`, so run them with `RENV_ACTIVATE_PROJECT=FALSE`, as their headers
+show; per-task results are saved in `data/*_jobs/` and an interrupted run
+resumes where it stopped.
+
 `diagnose_divergences.R` inspects the fits with divergent transitions.

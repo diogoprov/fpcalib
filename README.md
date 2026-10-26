@@ -50,6 +50,7 @@ fpcalib/
 │   ├── fp_fix.R                fit_fix(), run_fix(), summarise_fix(): false-positive rate on the occupancy covariate
 │   ├── fp_positive_control.R   fit_fpcov(), run_positive_control(), pair_with_constant()
 │   ├── fp_diagnostics.R        fp_calibration_check(), how_much_to_verify()
+│   ├── fp_revision.R           refits of the revision checks with crywolf (07)
 │   ├── fig_dag.R, fig_dag_v2.R model DAG
 │   └── figs_didaticas_curiango.R
 ├── analysis/                   scripts, run in order from the compendium root
@@ -83,6 +84,10 @@ fraction of sites verified:
 | `04_positive_control.R` | false-positive rate modelled on the confusing gradient w and on a noisy proxy of it (correlation 0.7), refitted to the first 100 datasets of every structured-confusion cell of `01` and paired with those fits | `data/fp_positive_control_*.rds` |
 | `05_confusion_intensity.R` | strength (0.25, 0.5, 1.0, 1.5) × correlation (0.3, 0.7, 1.0) of the confusion, at a rate of 0.05 with 30% verified; constant-rate model in both frameworks; 100 replicates per cell | `data/fp_intensity_*.rds` |
 | `06_manuscript_figures.R` | Figures 6 (coverage of b1 against verification, four models) and 7 (bias and coverage across the intensity grid), from the summaries only | `manuscript/figures/fig6_*`, `fig7_*` |
+| `07_revision_checks.R` | revision checks refitted with crywolf: cost of the occupancy covariate in the false-positive process under homogeneous false positives, a site random effect on the false-positive rate under unstructured heterogeneity, and leave-one-site-out cross-validation and posterior predictive checks under structured confusion; 100 replicates per cell | `data/fp_revision_results.rds` |
+| `08_observation_confirmation.R` | structured confusion (effect 1.5) under the observation-confirmation design, 5%, 10% or 30% of the automated occasions checked, plus two homogeneous cells; 100 replicates per cell | `data/fp_obsconfirm_results.rds` |
+| `09_revision_summary.R` | summaries, tables and figures of 07, 08 and 10 | `data/fp_revision_summary.rds`, `analysis/tables/`, `analysis/figures/` |
+| `10_obsconfirm_weak.R` | the design of 08 at the confusion effects 0.5 and 1.0 | `data/fp_obsconfirm_weak_results.rds` |
 
 All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,
 with a target acceptance rate of 0.95, parallelized across fits with **furrr**.
@@ -105,6 +110,15 @@ datasets of the main run; `04` stops if they do not match.
   covariate exactly, the recovery is complete.
 - Weak confusion (an effect of 0.5 or less on the logit scale) leaves the
   constant-rate correction calibrated at every correlation tested.
+- Placing the occupancy covariate in the false-positive process costs almost
+  nothing when false positives are homogeneous (interval widths within 2%).
+- Leave-one-site-out cross-validation detects strong structured confusion; the
+  posterior predictive check detects a false-positive rate that varies among
+  sites, but not whether it tracks the covariate.
+- Under observation confirmation, the constant-rate correction holds for weak
+  confusion at the lower false-positive rate and improves as more occasions are
+  checked; with the occupancy covariate in the false-positive process, coverage
+  is 0.89–0.98 in every cell with 30% of occasions checked.
 
 ## Reproducing the study
 
@@ -122,7 +136,8 @@ The results were produced with CmdStan 2.39.0 and cmdstanr 0.9.0. Then, from
 the compendium root, run the scripts in `analysis/` in numerical order. The
 full set takes many hours on a multi-core machine; the scored `.rds` files in
 `data/` let you regenerate the summaries and figures without rerunning the
-simulations. Scripts 04 and 05 start with a short smoke test.
+simulations. Scripts 04 and 05 start with a short smoke test. Scripts 07, 08
+and 10 also need the R package crywolf (see `analysis/README.md`).
 
 ## Citing
 
