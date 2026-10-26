@@ -127,3 +127,17 @@ all, about US$ 6 to 7 at US$ 2.8 to 3.0/h. A first attempt failed at once:
 R allows 128 connections, one per worker, so `user_data.sh` runs the script
 with `Rscript --max-connections=512`. For the estimate of a new run, use
 about 5 min per fit on the large instances.
+
+Second full run on 26 Oct 2026: script 12 (400 fits of `random_fp` with
+2000 + 2000 iterations). The median fit took 32 min (range 7 to 51), about
+twice the time estimated by scaling the 1000 + 1000 fits: the site random
+effect mixes slowly, so the time per fit does not scale with the number of
+iterations alone. Time one task of a new model before estimating a run.
+Spot instances were reclaimed six times: three 48xlarge instances
+(c7a, c7i, m7a), then three 24xlarge instances. With fits this long, each
+interruption loses the tasks running at that moment, up to about 45 min of
+sampling each, plus the image build. The last m7a.24xlarge, 95 workers, finished the remaining tasks
+in 33 min. Wall time about 4 h from the first launch, about US$ 7 to 8 in
+all. When the large spot pools are being reclaimed, a 24xlarge spot instance
+is the fallback: on-demand is not, because the account's on-demand quota for
+standard instances is only 32 vCPUs.
