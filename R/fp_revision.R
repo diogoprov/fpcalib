@@ -69,7 +69,7 @@ to_fp_data <- function(sim) {
 
 # one model fitted to one dataset -> one row, with the pointwise LOO values
 # in a list column (for paired model comparisons)
-fit_revision <- function(d, sim, model, seed) {
+fit_revision <- function(d, sim, model, seed, iter = 1000) {
   tr <- sim$truth
   args <- switch(model,
     constant  = list(fp = ~ 1),
@@ -79,7 +79,7 @@ fit_revision <- function(d, sim, model, seed) {
   res <- tryCatch({
     m <- suppressWarnings(do.call(crywolf::fp_occu, c(list(
       d, occ = ~ x, random_recorder = FALSE, chains = 4, parallel_chains = 1,
-      threads_per_chain = 1, iter_warmup = 1000, iter_sampling = 1000,
+      threads_per_chain = 1, iter_warmup = iter, iter_sampling = iter,
       adapt_delta = 0.95, seed = seed, refresh = 0, show_messages = FALSE), args)))
     s <- summary(m)$table
     row <- function(v) s[s$variable == v, ]

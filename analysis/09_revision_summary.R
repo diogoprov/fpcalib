@@ -13,10 +13,12 @@
 #     gradient (fp ~ w; true value 1.5), and, from 10_obsconfirm_weak.R, the
 #     same summaries at the weaker confusion effects 0.5 and 1.0, and, from
 #     11_obsconfirm_clare.R, at correlation 1.0 with a model ignoring false
-#     positives;
+#     positives; and, from 12_random_fp_long.R, item 3 with 2000 + 2000
+#     iterations;
 #   item 5 (01_run_simulation.R): interval width and RMSE of the main study.
 # Reads the per-task files in data/revision_jobs/, data/obsconfirm_jobs/,
-# data/obsconfirm_weak_jobs/ and data/obsconfirm_clare_jobs/,
+# data/obsconfirm_weak_jobs/, data/obsconfirm_clare_jobs/ and
+# data/revision_rfp_long_jobs/,
 # so it also works on a run still in progress. Writes
 # data/fp_revision_summary.rds, CSV tables in analysis/tables/ and figures
 # in analysis/figures/ (neither tracked by git).
@@ -109,6 +111,16 @@ if (!is.null(weak)) {
   out$obsconfirm_weak <- summarise_fits(weak, c("conf_effect", "p10", "frac_confirmed"))
   out$obsconfirm_weak_progress <- c(datasets = length(unique(paste(weak$rep, weak$cell))),
                                     fits = nrow(weak))
+}
+# random_fp with 2000 + 2000 iterations (12_random_fp_long.R)
+long <- read_jobs(file.path("data", "revision_rfp_long_jobs"))
+if (!is.null(long)) {
+  out$random_fp_long <- summarise_fits(long, c("regime", "p10", "verified_coverage"))
+  out$random_fp_long$median_min_ess_bulk <- vapply(
+    split(long, long[c("p10", "verified_coverage")], drop = TRUE),
+    function(g) stats::median(g$min_ess_bulk, na.rm = TRUE), numeric(1))[
+      paste(out$random_fp_long$p10, out$random_fp_long$verified_coverage, sep = ".")]
+  out$random_fp_long_progress <- c(datasets = nrow(long), fits = nrow(long))
 }
 # false positives on the occupancy covariate itself (11_obsconfirm_clare.R)
 clare <- read_jobs(file.path("data", "obsconfirm_clare_jobs"))
