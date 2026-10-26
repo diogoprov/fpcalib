@@ -10,9 +10,11 @@
 #     homogeneous false positives (false alarms);
 #   item 4 (08_observation_confirmation.R): the same summaries under the
 #     observation-confirmation design, including the effect of the confusing
-#     gradient (fp ~ w; true value 1.5);
+#     gradient (fp ~ w; true value 1.5), and, from 10_obsconfirm_weak.R, the
+#     same summaries at the weaker confusion effects 0.5 and 1.0;
 #   item 5 (01_run_simulation.R): interval width and RMSE of the main study.
-# Reads the per-task files in data/revision_jobs/ and data/obsconfirm_jobs/,
+# Reads the per-task files in data/revision_jobs/, data/obsconfirm_jobs/ and
+# data/obsconfirm_weak_jobs/,
 # so it also works on a run still in progress. Writes
 # data/fp_revision_summary.rds, CSV tables in analysis/tables/ and figures
 # in analysis/figures/ (neither tracked by git).
@@ -98,6 +100,13 @@ if (!is.null(obs)) {
   }
   out$obsconfirm_progress <- c(datasets = length(unique(paste(obs$rep, obs$cell))),
                                fits = nrow(obs))
+}
+# weaker confusion under observation confirmation (10_obsconfirm_weak.R)
+weak <- read_jobs(file.path("data", "obsconfirm_weak_jobs"))
+if (!is.null(weak)) {
+  out$obsconfirm_weak <- summarise_fits(weak, c("conf_effect", "p10", "frac_confirmed"))
+  out$obsconfirm_weak_progress <- c(datasets = length(unique(paste(weak$rep, weak$cell))),
+                                    fits = nrow(weak))
 }
 
 # --- item 5 -------------------------------------------------------------------
@@ -201,6 +210,29 @@ if (!is.null(out$obsconfirm)) {
     labs(x = "Automated occasions checked", y = "Coverage of the 95% CrI of the slope",
          colour = NULL, title = "Item 4: structured confusion, observation-confirmation design")
   save_fig(p, "item4_obsconfirm_coverage.png")
+}
+# item 4, weaker confusion: coverage by confusion effect (1.5 from 08)
+if (!is.null(out$obsconfirm_weak)) {
+  o <- out$obsconfirm_weak
+  if (!is.null(out$obsconfirm)) {
+    s15 <- out$obsconfirm[out$obsconfirm$regime == "structured" &
+                            out$obsconfirm$model %in% c("constant", "fp_x"), ]
+    s15$conf_effect <- 1.5
+    o <- rbind(o, s15[names(o)])
+  }
+  o$p10_lab <- sprintf("p10 = %.2f", o$p10)
+  o$effect_lab <- sprintf("confusion effect %.1f", o$conf_effect)
+  p <- ggplot(o, aes(frac_confirmed, slope.coverage, colour = model)) +
+    geom_hline(yintercept = 0.95, linetype = 2) +
+    geom_line() + geom_point() +
+    geom_errorbar(aes(ymin = slope.coverage - 2 * slope.coverage_mcse,
+                      ymax = pmin(1, slope.coverage + 2 * slope.coverage_mcse)), width = 0) +
+    facet_grid(p10_lab ~ effect_lab) +
+    scale_colour_manual(values = okabe) +
+    scale_x_continuous(labels = scales::percent) + coord_cartesian(ylim = c(0, 1)) +
+    labs(x = "Automated occasions checked", y = "Coverage of the 95% CrI of the slope",
+         colour = NULL, title = "Item 4: strength of confusion, observation-confirmation design")
+  save_fig(p, "item4_obsconfirm_weak.png", h = 6)
 }
 # item 5: interval width against RMSE in the main study
 m <- out$main_width_rmse

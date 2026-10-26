@@ -30,9 +30,10 @@ Miller_Chambert_models/
 # macOS
 .DS_Store
 
-# NOTE: data/*.rds are the scored simulation outputs (small, ~1 MB total). They
+# NOTE: data/*.rds are the scored simulation outputs (about 9 MB in all). They
 # are KEPT under version control so the figures reproduce WITHOUT the multi-hour
 # rerun. Do not add them here.
 data/revision_jobs/
 data/obsconfirm_jobs/
+data/obsconfirm_weak_jobs/
 analysis/tables/
