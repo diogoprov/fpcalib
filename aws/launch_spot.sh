@@ -8,6 +8,8 @@
 # max_hours: hard limit after which the instance terminates (default 12).
 # reps: sets REPS for the script (default: the script's own default).
 # <instance_profile>: IAM instance profile with read/write access to the prefix.
+# AZ (environment, optional): availability zone, e.g. us-east-1c, to pick the
+#   cheapest spot price; otherwise EC2 chooses.
 set -euo pipefail
 BUCKET=$1; RUN=$2; SCRIPT=$3; TYPE=$4; WORKERS=$5; ROLE=$6; MAX_HOURS=${7:-12}; REPS=${8:-}
 cd "$(git rev-parse --show-toplevel)"
@@ -30,6 +32,7 @@ echo "AMI ${AMI}; job folder data/${JOBS}" >&2
 aws ec2 run-instances \
   --image-id "${AMI}" \
   --instance-type "${TYPE}" \
+  ${AZ:+--placement AvailabilityZone=${AZ}} \
   --instance-market-options '{"MarketType":"spot","SpotOptions":{"SpotInstanceType":"one-time","InstanceInterruptionBehavior":"terminate"}}' \
   --instance-initiated-shutdown-behavior terminate \
   --iam-instance-profile Name="${ROLE}" \
