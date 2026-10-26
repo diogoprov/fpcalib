@@ -115,3 +115,15 @@ check it again). A c7a.24xlarge (96 vCPUs, US$ 1.4 to 1.5/h) costs about
 the same and takes twice as long. EBS and S3 add cents. A spot interruption
 loses only the tasks running at that moment (at most about 10 min of work
 each) plus the image build on the new instance.
+
+Full run on 26 Oct 2026: script 11 (1,800 tasks, 3,600 Stan fits plus 1,800
+fits of `unmarked::occu`) on c7a.48xlarge, 190 workers. With all cores busy,
+the median fit took 4.9 min (range 3.5 to 7.0), about 50% more than on the
+small instance, so that run needed about 300 core-hours. Two spot
+interruptions (after 20 and 35 min) were resumed from the saved job files
+by `supervise.sh`; the last instance finished the remaining 1,040 tasks in
+1.0 h. Wall time 2.3 h from the first launch, about 2.1 instance-hours in
+all, about US$ 6 to 7 at US$ 2.8 to 3.0/h. A first attempt failed at once:
+R allows 128 connections, one per worker, so `user_data.sh` runs the script
+with `Rscript --max-connections=512`. For the estimate of a new run, use
+about 5 min per fit on the large instances.
