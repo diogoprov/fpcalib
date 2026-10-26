@@ -43,8 +43,19 @@ run in seconds without them.
    `analysis/figures/` (the last two not tracked by git).
 10. `10_obsconfirm_weak.R`: the design of 08 at the weaker confusion effects
     0.5 and 1.0. Writes `data/fp_obsconfirm_weak_results.rds`.
+11. `11_obsconfirm_clare.R`: the design of 08 with false positives that depend
+    on the occupancy covariate itself (correlation 1.0), at the confusion
+    effects 0.5, 1.0 and 1.5, adding an occupancy model that ignores false
+    positives (`unmarked::occu`). Writes `data/fp_obsconfirm_clare_results.rds`.
+    It was run on an EC2 spot instance (c7a.48xlarge); the fits are close to,
+    but not bitwise equal to, those of the same seeds on macOS.
 
-Scripts 07, 08 and 10 use crywolf 1.9.0.9000 (commit a5d2516 of
+In 08, 10 and 11 the seed of a task depends on `REPS`, so a test run with
+fewer replicates must use another job folder: its files would otherwise be
+reused by the full run with the wrong seeds. This happened once in 10 (11
+tasks) and was corrected in version 0.2.1.
+
+Scripts 07, 08, 10 and 11 use crywolf 1.9.0.9000 (commit a5d2516 of
 https://github.com/diogoprov/crywolf), whose Stan programs and fitting,
 simulation and checking functions are those of release 1.9.0. crywolf is not in
 `renv.lock`, so run them with `RENV_ACTIVATE_PROJECT=FALSE`, as their headers

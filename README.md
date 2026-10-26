@@ -88,6 +88,7 @@ fraction of sites verified:
 | `08_observation_confirmation.R` | structured confusion (effect 1.5) under the observation-confirmation design, 5%, 10% or 30% of the automated occasions checked, plus two homogeneous cells; 100 replicates per cell | `data/fp_obsconfirm_results.rds` |
 | `09_revision_summary.R` | summaries, tables and figures of 07, 08 and 10 | `data/fp_revision_summary.rds`, `analysis/tables/`, `analysis/figures/` |
 | `10_obsconfirm_weak.R` | the design of 08 at the confusion effects 0.5 and 1.0 | `data/fp_obsconfirm_weak_results.rds` |
+| `11_obsconfirm_clare.R` | the design of 08 with false positives on the occupancy covariate itself (correlation 1.0), effects 0.5, 1.0 and 1.5, plus an occupancy model that ignores false positives | `data/fp_obsconfirm_clare_results.rds` |
 
 All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,
 with a target acceptance rate of 0.95, parallelized across fits with **furrr**.
@@ -119,6 +120,10 @@ datasets of the main run; `04` stops if they do not match.
   confusion at the lower false-positive rate and improves as more occasions are
   checked; with the occupancy covariate in the false-positive process, coverage
   is 0.89–0.98 in every cell with 30% of occasions checked.
+- When false positives depend on the occupancy covariate itself, the
+  constant-rate correction removes 47–100% of the bias of a model that ignores
+  false positives, yet where it removes 47–74% its intervals cover the truth in
+  at most 4% of replicates; the covariate-dependent model covers it in 92–98%.
 
 ## Reproducing the study
 
