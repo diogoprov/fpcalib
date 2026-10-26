@@ -59,10 +59,12 @@ REPS_ENV=""
 [ -n "${REPS}" ] && REPS_ENV="-e REPS=${REPS}"
 # a job file cut short by an interruption cannot be read: drop it so the task
 # runs again
+# (R allows 128 connections by default, one per future worker: raise it for
+# the large instances)
 docker build -t fpcalib . > ${WORK}/build.log 2>&1 && \
 docker run --rm -v ${WORK}:/project -e WORKERS=${WORKERS} ${REPS_ENV} fpcalib \
   bash -c "Rscript -e 'for (f in list.files(\"data/${JOBS}\", full.names = TRUE)) if (inherits(try(readRDS(f), silent = TRUE), \"try-error\")) { message(\"removed unreadable \", f); file.remove(f) }' && \
-           Rscript ${SCRIPT}" >> ${LOG} 2>&1
+           Rscript --max-connections=512 ${SCRIPT}" >> ${LOG} 2>&1
 STATUS=$?
 echo "exit status ${STATUS} at $(date)" >> ${LOG}
 cat ${WORK}/build.log >> ${LOG}
