@@ -95,5 +95,23 @@ aws ec2 describe-spot-price-history --instance-types c7a.48xlarge \
   --query 'SpotPriceHistory[].[AvailabilityZone,SpotPrice]' --output text
 ```
 
-The image is built on each instance (about __BUILD__ min), before sampling
-starts.
+Test on 26 Oct 2026: `REPS = 1` of script 10 (12 tasks, 24 fits) on a
+c7a.2xlarge spot instance in us-east-1a, 8 workers. The instance ran 19 min
+(image build 3.5 min, fits 14.5 min) at US$ 0.19/h, about US$ 0.06. The
+median fit took 3.3 min (range 2.8 to 4.2), against 2.9 min for the same
+fits on the Mac (M5 Pro, 16 workers), so a c7a core is about 15% slower.
+The simulated data were identical to those of the local run (same seeds;
+the true marginal false-positive rate differs by 1e-17, floating-point
+arithmetic of another platform), and the posterior means differed by at
+most 1.2% of the width of the 95% interval: the fits are close, not bitwise
+equal, as expected across platforms. All 24 intervals for the slope agreed
+on whether they covered the true value.
+
+From that rate, a run of 3,600 fits (about 170 core-hours on the Mac) needs
+about 200 core-hours on c7a: about 1.1 h of sampling on a c7a.48xlarge
+with 190 workers, plus build and the tail of the last tasks, about 1.5 h
+in all, or about US$ 4.5 at US$ 2.8 to 3.1/h (spot price of 26 Oct 2026;
+check it again). A c7a.24xlarge (96 vCPUs, US$ 1.4 to 1.5/h) costs about
+the same and takes twice as long. EBS and S3 add cents. A spot interruption
+loses only the tasks running at that moment (at most about 10 min of work
+each) plus the image build on the new instance.
