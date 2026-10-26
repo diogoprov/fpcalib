@@ -11,10 +11,12 @@
 #   item 4 (08_observation_confirmation.R): the same summaries under the
 #     observation-confirmation design, including the effect of the confusing
 #     gradient (fp ~ w; true value 1.5), and, from 10_obsconfirm_weak.R, the
-#     same summaries at the weaker confusion effects 0.5 and 1.0;
+#     same summaries at the weaker confusion effects 0.5 and 1.0, and, from
+#     11_obsconfirm_clare.R, at correlation 1.0 with a model ignoring false
+#     positives;
 #   item 5 (01_run_simulation.R): interval width and RMSE of the main study.
-# Reads the per-task files in data/revision_jobs/, data/obsconfirm_jobs/ and
-# data/obsconfirm_weak_jobs/,
+# Reads the per-task files in data/revision_jobs/, data/obsconfirm_jobs/,
+# data/obsconfirm_weak_jobs/ and data/obsconfirm_clare_jobs/,
 # so it also works on a run still in progress. Writes
 # data/fp_revision_summary.rds, CSV tables in analysis/tables/ and figures
 # in analysis/figures/ (neither tracked by git).
@@ -107,6 +109,13 @@ if (!is.null(weak)) {
   out$obsconfirm_weak <- summarise_fits(weak, c("conf_effect", "p10", "frac_confirmed"))
   out$obsconfirm_weak_progress <- c(datasets = length(unique(paste(weak$rep, weak$cell))),
                                     fits = nrow(weak))
+}
+# false positives on the occupancy covariate itself (11_obsconfirm_clare.R)
+clare <- read_jobs(file.path("data", "obsconfirm_clare_jobs"))
+if (!is.null(clare)) {
+  out$obsconfirm_clare <- summarise_fits(clare, c("conf_effect", "p10", "frac_confirmed"))
+  out$obsconfirm_clare_progress <- c(datasets = length(unique(paste(clare$rep, clare$cell))),
+                                     fits = nrow(clare))
 }
 
 # --- item 5 -------------------------------------------------------------------
@@ -233,6 +242,23 @@ if (!is.null(out$obsconfirm_weak)) {
     labs(x = "Automated occasions checked", y = "Coverage of the 95% CrI of the slope",
          colour = NULL, title = "Item 4: strength of confusion, observation-confirmation design")
   save_fig(p, "item4_obsconfirm_weak.png", h = 6)
+}
+# item 4, correlation 1.0: coverage by confusion effect, with the naive model
+if (!is.null(out$obsconfirm_clare)) {
+  o <- out$obsconfirm_clare
+  o$p10_lab <- sprintf("p10 = %.2f", o$p10)
+  o$effect_lab <- sprintf("confusion effect %.1f", o$conf_effect)
+  p <- ggplot(o, aes(frac_confirmed, slope.coverage, colour = model)) +
+    geom_hline(yintercept = 0.95, linetype = 2) +
+    geom_line() + geom_point() +
+    geom_errorbar(aes(ymin = slope.coverage - 2 * slope.coverage_mcse,
+                      ymax = pmin(1, slope.coverage + 2 * slope.coverage_mcse)), width = 0) +
+    facet_grid(p10_lab ~ effect_lab) +
+    scale_colour_manual(values = c(okabe, naive = "#CC79A7")) +
+    scale_x_continuous(labels = scales::percent) + coord_cartesian(ylim = c(0, 1)) +
+    labs(x = "Automated occasions checked", y = "Coverage of the 95% interval of the slope",
+         colour = NULL, title = "Item 4: false positives on the occupancy covariate (cor = 1)")
+  save_fig(p, "item4_obsconfirm_clare.png", h = 6)
 }
 # item 5: interval width against RMSE in the main study
 m <- out$main_width_rmse
