@@ -55,6 +55,7 @@ fpcalib/
 │   └── figs_didaticas_curiango.R
 ├── analysis/                   scripts, run in order from the compendium root
 ├── data/                       scored outputs (.rds), kept under version control
+├── Dockerfile, aws/            long runs on an AWS EC2 spot instance (aws/README.md)
 └── manuscript/
     ├── figures/                manuscript figures and the scripts that draw them
     └── fpcalib_vs_simFPOcc.md  comparison with the simFPOcc framework
@@ -143,6 +144,12 @@ full set takes many hours on a multi-core machine; the scored `.rds` files in
 `data/` let you regenerate the summaries and figures without rerunning the
 simulations. Scripts 04 and 05 start with a short smoke test. Scripts 07, 08
 and 10 also need the R package crywolf (see `analysis/README.md`).
+
+The runs of scripts 07, 08 and 10 (and later ones built the same way) can go
+to a single AWS EC2 spot instance instead of a local machine: `Dockerfile`
+and `aws/` (see `aws/README.md`) run one script in a container, save its
+job files to S3 so that an interrupted run resumes, and stop the instance at
+the end.
 
 ## Citing
 

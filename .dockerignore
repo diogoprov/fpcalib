@@ -1,0 +1,2 @@
+# the image needs only the Dockerfile; the code is mounted at run time
+*
