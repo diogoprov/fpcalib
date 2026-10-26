@@ -89,6 +89,7 @@ fraction of sites verified:
 | `08_observation_confirmation.R` | structured confusion (effect 1.5) under the observation-confirmation design, 5%, 10% or 30% of the automated occasions checked, plus two homogeneous cells; 100 replicates per cell | `data/fp_obsconfirm_results.rds` |
 | `09_revision_summary.R` | summaries, tables and figures of 07, 08 and 10 | `data/fp_revision_summary.rds`, `analysis/tables/`, `analysis/figures/` |
 | `10_obsconfirm_weak.R` | the design of 08 at the confusion effects 0.5 and 1.0 | `data/fp_obsconfirm_weak_results.rds` |
+| `12_random_fp_long.R` | the site random effect on the false-positive rate of 07 refitted with 2,000 + 2,000 iterations to the same 400 unstructured datasets | `data/fp_revision_rfp_long_results.rds` |
 | `11_obsconfirm_clare.R` | the design of 08 with false positives on the occupancy covariate itself (correlation 1.0), effects 0.5, 1.0 and 1.5, plus an occupancy model that ignores false positives | `data/fp_obsconfirm_clare_results.rds` |
 
 All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,

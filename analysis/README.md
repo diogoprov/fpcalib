@@ -50,12 +50,17 @@ run in seconds without them.
     It was run on an EC2 spot instance (c7a.48xlarge); the fits are close to,
     but not bitwise equal to, those of the same seeds on macOS.
 
+12. `12_random_fp_long.R`: the site random effect on the false-positive rate
+    of 07, refitted with 2,000 + 2,000 iterations to the same 400 datasets of
+    the unstructured cells, because it mixed slowly with 1,000 + 1,000. Writes
+    `data/fp_revision_rfp_long_results.rds`. Run on EC2 spot instances.
+
 In 08, 10 and 11 the seed of a task depends on `REPS`, so a test run with
 fewer replicates must use another job folder: its files would otherwise be
 reused by the full run with the wrong seeds. This happened once in 10 (11
 tasks) and was corrected in version 0.2.1.
 
-Scripts 07, 08, 10 and 11 use crywolf 1.9.0.9000 (commit a5d2516 of
+Scripts 07, 08, 10, 11 and 12 use crywolf 1.9.0.9000 (commit a5d2516 of
 https://github.com/diogoprov/crywolf), whose Stan programs and fitting,
 simulation and checking functions are those of release 1.9.0. crywolf is not in
 `renv.lock`, so run them with `RENV_ACTIVATE_PROJECT=FALSE`, as their headers
