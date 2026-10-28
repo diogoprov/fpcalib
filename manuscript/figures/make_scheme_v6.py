@@ -8,6 +8,9 @@ import re, sys
 src, dst = sys.argv[1], sys.argv[2]
 s = open(src).read()
 s = re.sub(r'<metadata>.*?</metadata>', '', s, flags=re.S)
+# name the correlation as in panel c and in the caption
+assert s.count(' ~ w (r = 1, 0.7)') == 1
+s = s.replace(' ~ w (r = 1, 0.7)', ' ~ w (cor(w, x) = 1, 0.7)')
 
 FONT = 'font-family="Helvetica, Arial, FreeSans, sans-serif"'
 DARK, GREY, LIGHT, ORANGE, BLUE = '#2b2b2b', '#6b6b6b', '#d9d9d9', '#C8691C', '#2A6FB0'
@@ -51,7 +54,7 @@ add += f'<line x1="30" y1="965" x2="850" y2="965" stroke="{LIGHT}" stroke-width=
 add += text(30, 1010, 'd', size=42, fill=DARK, anchor='start', weight='bold')
 add += text(80, 1006, 'observation confirmation: no verified sites, a share of occasions checked',
             size=23, fill=DARK, anchor='start')
-add += text(108, 1052, 'cor', anchor='middle')
+add += text(30, 1052, 'cor(w, x)', anchor='start')
 add += text(200, 1052, 'effect', anchor='end')
 rows = [(0.7, 0.05, 1084), (0.7, 0.20, 1128), (1.0, 0.05, 1180), (1.0, 0.20, 1224)]
 for cor, p10, y in rows:
