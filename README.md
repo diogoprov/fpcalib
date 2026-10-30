@@ -57,6 +57,8 @@ fpcalib/
 ├── data/                       scored outputs (.rds), kept under version control
 ├── Dockerfile, aws/            long runs on an AWS EC2 spot instance (aws/README.md)
 └── manuscript/
+    ├── reproduce.qmd           Figures 3–7 and every number in the text, checked against data/
+    ├── appendix-S1.qmd         Appendix S1 of the manuscript
     ├── figures/                manuscript figures and the scripts that draw them
     └── fpcalib_vs_simFPOcc.md  comparison with the simFPOcc framework
 ```
@@ -80,17 +82,21 @@ fraction of sites verified:
 | Script | What it does | Output |
 |---|---|---|
 | `01_run_simulation.R` | main study: 23 cells (the 3 regimes × 2 rates × 10% and 30% verified, two near-boundary cells at a rate of 0.01, a verification sweep at 0%, 5%, and 50%, and structured confusion at 50%, 70%, and 90% verified); 100 replicates per cell, 300 for the structured-confusion cells; constant-rate Stan model and `occuFP` | `data/fp_sim_results.rds`, `data/fp_sim_summary.rds` |
-| `02_make_figures.R` | coverage figures from the saved results | `analysis/figures/` |
+| `02_make_figures.R` | superseded: coverage figures of the first run of 100 replicates | `analysis/figures/` |
 | `03_run_fix_arm.R` | false-positive rate modelled on the occupancy covariate, in Stan and in `occuFP`, for the structured-confusion cells, plus two cells in which false positives depend on that covariate exactly; 100 replicates per cell | `data/fp_fix_*.rds` |
 | `04_positive_control.R` | false-positive rate modelled on the confusing gradient w and on a noisy proxy of it (correlation 0.7), refitted to the first 100 datasets of every structured-confusion cell of `01` and paired with those fits | `data/fp_positive_control_*.rds` |
 | `05_confusion_intensity.R` | strength (0.25, 0.5, 1.0, 1.5) × correlation (0.3, 0.7, 1.0) of the confusion, at a rate of 0.05 with 30% verified; constant-rate model in both frameworks; 100 replicates per cell | `data/fp_intensity_*.rds` |
-| `06_manuscript_figures.R` | Figures 6 (coverage of b1 against verification, four models) and 7 (bias and coverage across the intensity grid), from the summaries only | `manuscript/figures/fig6_*`, `fig7_*` |
+| `06_manuscript_figures.R` | superseded by `14`: earlier drawing of the coverage of b1 against verification and of the intensity grid | `manuscript/figures/fig6_*`, `fig7_*` |
 | `07_revision_checks.R` | revision checks refitted with crywolf: cost of the occupancy covariate in the false-positive process under homogeneous false positives, a site random effect on the false-positive rate under unstructured heterogeneity, and leave-one-site-out cross-validation and posterior predictive checks under structured confusion; 100 replicates per cell | `data/fp_revision_results.rds` |
 | `08_observation_confirmation.R` | structured confusion (effect 1.5) under the observation-confirmation design, 5%, 10% or 30% of the automated occasions checked, plus two homogeneous cells; 100 replicates per cell | `data/fp_obsconfirm_results.rds` |
 | `09_revision_summary.R` | summaries, tables and figures of 07, 08 and 10 | `data/fp_revision_summary.rds`, `analysis/tables/`, `analysis/figures/` |
 | `10_obsconfirm_weak.R` | the design of 08 at the confusion effects 0.5 and 1.0 | `data/fp_obsconfirm_weak_results.rds` |
 | `12_random_fp_long.R` | the site random effect on the false-positive rate of 07 refitted with 2,000 + 2,000 iterations to the same 400 unstructured datasets | `data/fp_revision_rfp_long_results.rds` |
 | `11_obsconfirm_clare.R` | the design of 08 with false positives on the occupancy covariate itself (correlation 1.0), effects 0.5, 1.0 and 1.5, plus an occupancy model that ignores false positives | `data/fp_obsconfirm_clare_results.rds` |
+| `13_fig4_caterpillars.R` | Figure 4: per-replicate intervals of four cells of `01` | `manuscript/figures/Fig4_*` |
+| `14_figs_3_5_6.R` | Figures 3 (the three regimes), 5 (coverage of b1 against verification, four models) and 6 (the intensity grid), from the summaries only | `manuscript/figures/Fig3_*`, `Fig5_*`, `Fig6_*` |
+| `15_nightjar.R` | the nightjar example: six fits of crywolf 1.9.0 to its curiango data, at four classifier thresholds | `data/nightjar_fits.rds` |
+| `16_fig7_nightjar.R` | Figure 7: the nightjar example by threshold | `manuscript/figures/Fig7_*` |
 
 All Stan fits used four chains of 1,000 warm-up and 1,000 sampling iterations,
 with a target acceptance rate of 0.95, parallelized across fits with **furrr**.
@@ -143,8 +149,20 @@ The results were produced with CmdStan 2.39.0 and cmdstanr 0.9.0. Then, from
 the compendium root, run the scripts in `analysis/` in numerical order. The
 full set takes many hours on a multi-core machine; the scored `.rds` files in
 `data/` let you regenerate the summaries and figures without rerunning the
-simulations. Scripts 04 and 05 start with a short smoke test. Scripts 07, 08
-and 10 also need the R package crywolf (see `analysis/README.md`).
+simulations. Scripts 04 and 05 start with a short smoke test. Scripts 07, 08,
+10 to 12 and 15 also need the R package crywolf (see `analysis/README.md`).
+
+To check the manuscript against the stored results without rerunning
+anything, render `manuscript/reproduce.qmd` from the compendium root:
+
+```sh
+quarto render manuscript/reproduce.qmd
+```
+
+It reads only `data/`, redraws Figures 3 to 7 and recomputes every number
+reported in the Results and Discussion, and it stops with a list of the
+numbers that disagree, if any (`-P strict:false` reports them in a table
+instead). `manuscript/appendix-S1.qmd` renders Appendix S1 the same way.
 
 The runs of scripts 07, 08 and 10 (and later ones built the same way) can go
 to a single AWS EC2 spot instance instead of a local machine: `Dockerfile`

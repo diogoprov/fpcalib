@@ -1,0 +1,177 @@
+---
+title: "Appendix S1. Additional results on the robustness of the constant-rate correction, the costs of the remedies and the checks of model adequacy"
+format:
+  docx:
+    fig-dpi: 300
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+# Tables are read from the summaries written by analysis/09_revision_summary.R.
+# Render from the compendium root: quarto render manuscript/appendix-S1.qmd
+knitr::opts_knit$set(root.dir = "..")
+```
+
+```{r helpers}
+library(tidyverse)
+revision <- readRDS("data/fp_revision_summary.rds")
+rd <- \(f) as.data.frame(revision[[sub("\\.csv$", "", f)]])
+num <- \(x, d = 2) sub("^-", "\u2212", formatC(round(x, d) + 0, format = "f", digits = d))
+sgn <- \(x, d = 2) ifelse(round(x, d) > 0, paste0("+", num(x, d)), num(x, d))
+pct <- \(x) paste0(round(100 * x), "%")
+```
+
+This appendix supports the Results and Discussion of the main text. All results come from the simulations described in the Material and Methods, except those of Section S1.4, which come from the simulations of the crywolf package (Provete et al. 2026a). Coverage is the fraction of the 100 replicates of a cell whose 95% interval contained the true environmental effect (−0.8), and bias is the mean difference between the estimate and that value.
+
+The checks of Sections S1.2, S1.3 and S1.5 were fitted with crywolf to the first 100 datasets of the corresponding cells of the main simulation, regenerated from their stored seeds and checked against the original datasets. None of these 3,400 fits included a recorder random effect, as the data had none, so the coverages of the constant-rate model differ slightly from those of the main run on the same datasets. Table S1 summarizes all the additional checks.
+
+**Table S1.** Summary of the additional checks: what each one asked, the cells and models fitted, and its main result. Coverage refers to the 95% interval of the environmental effect unless stated otherwise.
+
+| Check | Cells and models | Main result | Section |
+|:--|:--|:--|:--|
+| Cost of the occupancy covariate in the false-positive process | Nine homogeneous cells; constant rate and p10 ~ x | Coverage of 0.91–0.98 with p10 ~ x, against 0.89–0.97; same bias; interval width differed by −0.2% to +1.7% | S1.2 |
+| Site random effect on the false-positive rate | Four unstructured cells; constant rate and site random effect | Coverage rose from 0.67–0.93 to 0.93–0.95, and the mean false-positive rate was covered in 89–92% of replicates; wider intervals and slower mixing | S1.3 |
+| Leave-one-site-out cross-validation | Four structured and nine homogeneous cells; constant rate against p10 ~ x | Preferred p10 ~ x by more than four units of ELPD in 94–100% of structured replicates and in at most 1% of homogeneous ones | S1.5 |
+| Posterior predictive check | Same cells, plus the unstructured cells | Flagged the constant-rate model in every structured and every unstructured replicate, and in at most 4% of homogeneous ones | S1.5 |
+| Observation-confirmation design | 38 cells; constant rate, p10 ~ x, p10 ~ w and a model that ignores false positives | The constant rate removed 47–100% of the bias of ignoring false positives at cor(w, x) = 1.0, but at the strongest confusion with cor(w, x) = 0.7, checking 30% of occasions raised its coverage only to 0.61 and 0.18; p10 ~ x covered the effect in 92–98% of replicates at cor(w, x) = 1.0 | S1.1 |
+
+## S1.1 Observation confirmation
+
+In this design, no site is verified separately, and false observations could also occur at occupied sites. Besides the constant-rate model and the model with the occupancy covariate in the false-positive process, fitted in every cell, we fitted the model given the confusing gradient at the strongest confusion with a correlation of 0.7, and we added two homogeneous cells with 10% of occasions checked. The occupancy model that ignores false positives was fitted with the R package unmarked (Fiske and Chandler 2011) to the automated detections alone, with constant detection, and its 95% interval for the slope is a Wald interval. All Bayesian fits used crywolf with the sampler settings of the main simulation.
+
+Table S2 gives the coverage and bias of the environmental effect in every cell of the observation-confirmation design, and Figure S1 shows its coverage. Under homogeneous false positives, both the constant-rate model and the model with the occupancy covariate in the false-positive process covered the environmental effect in 96–99% of replicates. Under structured confusion, the constant-rate model held at weak confusion and the lower false-positive rate, but its coverage fell as the confusion strengthened, as the false-positive rate rose and as the confusing gradient tracked the occupancy covariate more closely. Checking more occasions raised its coverage in most cells, although at the strongest confusion and the higher false-positive rate it barely moved it. An occupancy model that ignored false positives, the single-season analogue of the reference of Clare et al. (2021), estimated the environmental effect with a bias of +0.90 to +2.19, reversing its sign, and the constant-rate correction removed 47–100% of that bias in every cell at a correlation of 1.0. The model with the occupancy covariate in the false-positive process, which at a correlation of 1.0 is the generating model, covered the environmental effect in 92–98% of replicates in every cell at that correlation, whatever the share checked. At a correlation of 0.7 and the strongest confusion, in contrast, it reached nominal coverage only when 30% of occasions were checked, that is, about 1,800 of the 6,000 automated occasions, of which about 700 to 900 held a detection, whereas the model given the confusing gradient covered it in 93–98% of replicates at every share checked.
+
+One interpretation of why checking occasions helps more than verifying sites is that a checked occasion resolves the detections of its site and occasion directly, so that, as checks accumulate, less of the unmodelled variation in false positives is absorbed by the occupancy slope, whereas a verified site only anchors their mean rate. At an effect of 1.0, a correlation of 0.7 and the lower false-positive rate, checking 5% of occasions (about 300) gave the same coverage as verifying 30% of sites in the intensity block (0.76 in both, with about 270 verified occasions). Nonetheless, because a checked automated occasion and an occasion of a verified site carry different information, this comparison indicates the scale of the effort rather than an exact exchange rate.
+
+```{r obs-data}
+mods <- c(constant = "Constant rate", fp_x = "p10 ~ x", fp_w = "p10 ~ w", naive = "Ignores false positives")
+strong <- rd("obsconfirm.csv") |>
+  mutate(cor = ifelse(regime == "homogeneous", NA, 0.7),
+         conf_effect = ifelse(regime == "homogeneous", 0, 1.5))
+obs <- bind_rows(strong,
+                 rd("obsconfirm_weak.csv") |> mutate(cor = 0.7),
+                 rd("obsconfirm_clare.csv") |> mutate(cor = 1.0)) |>
+  select(cor, conf_effect, p10, frac_confirmed, model, coverage = slope.coverage, bias = slope.bias)
+stopifnot(nrow(obs) == 22 + 24 + 54)
+```
+
+**Table S2.** Coverage and bias of the environmental effect under the observation-confirmation design, by correlation between the confusing gradient and the occupancy covariate, cor(w, x), confusion effect (on the logit of the false-positive rate), false-positive rate (p10) and share of automated occasions checked. The model given the confusing gradient (p10 ~ w) was fitted only at the strongest confusion with a correlation of 0.7, and the model that ignores false positives (unmarked::occu, with a Wald interval) only at a correlation of 1.0. The two homogeneous cells have no confusing gradient. Dashes mark models not fitted to a cell.
+
+```{r table-s1}
+wide <- obs |>
+  pivot_wider(names_from = model, values_from = c(coverage, bias)) |>
+  arrange(is.na(cor), cor, conf_effect, p10, frac_confirmed)
+cell <- \(x, f) ifelse(is.na(x), "–", f(x))
+wide |>
+  transmute(`cor(w, x)` = ifelse(is.na(cor), "–", num(cor, 1)),
+            Effect = ifelse(conf_effect == 0, "0 (homogeneous)", num(conf_effect, 1)),
+            p10 = num(p10, 2),
+            Checked = pct(frac_confirmed),
+            `Constant: coverage` = cell(coverage_constant, num),
+            `Constant: bias` = cell(bias_constant, sgn),
+            `p10 ~ x: coverage` = cell(coverage_fp_x, num),
+            `p10 ~ x: bias` = cell(bias_fp_x, sgn),
+            `p10 ~ w: coverage` = cell(coverage_fp_w, num),
+            `Ignores FP: bias` = cell(bias_naive, sgn)) |>
+  knitr::kable(align = "llllrrrrrr")
+```
+
+```{r fig-s1, fig.width = 7.5, fig.height = 7.2, fig.cap = "**Figure S1.** Coverage of the 95% interval of the environmental effect under the observation-confirmation design, against the share of automated occasions checked. Rows cross the correlation between the confusing gradient and the occupancy covariate, cor(w, x), with the false-positive rate (p10); columns are the confusion effect. Vertical bars are ±2 Monte Carlo standard errors and the dashed line marks the nominal 0.95. Notice that the model with the occupancy covariate in the false-positive process (blue) stays near nominal at a correlation of 1.0, where it is the generating model, whereas the constant-rate model (grey) falls as the confusion strengthens and recovers only partly with more checking, and that the model that ignores false positives (red) almost never covers the true value."}
+pal <- c("Constant rate" = "#8c8b87", "p10 ~ x" = "#2a78d6", "p10 ~ w" = "#1baf7a",
+         "Ignores false positives" = "#e34948")
+mcse <- bind_rows(strong, rd("obsconfirm_weak.csv") |> mutate(cor = 0.7),
+                  rd("obsconfirm_clare.csv") |> mutate(cor = 1.0)) |>
+  filter(!is.na(cor)) |>
+  transmute(cor, conf_effect, p10, frac_confirmed, model = factor(mods[model], levels = mods),
+            coverage = slope.coverage, se = slope.coverage_mcse,
+            row = paste0("cor(w, x) = ", num(cor, 1), ", p10 = ", num(p10, 2)),
+            col = paste("confusion effect", num(conf_effect, 1)))
+ggplot(mcse, aes(frac_confirmed, coverage, colour = model)) +
+  geom_hline(yintercept = 0.95, linetype = "dashed", linewidth = 0.4) +
+  geom_linerange(aes(ymin = pmax(0, coverage - 2 * se), ymax = pmin(1, coverage + 2 * se)), linewidth = 0.5) +
+  geom_line(linewidth = 0.6) +
+  geom_point(size = 1.8) +
+  facet_grid(row ~ col) +
+  scale_x_continuous(breaks = c(0.05, 0.1, 0.3), labels = c("5%", "10%", "30%")) +
+  scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.95)) +
+  scale_colour_manual(values = pal, name = NULL) +
+  labs(x = "Automated occasions checked", y = "Coverage of the environmental effect") +
+  theme_minimal(base_size = 10) +
+  theme(legend.position = "top", panel.grid.minor = element_blank(),
+        strip.text = element_text(size = 8.5))
+```
+
+## S1.2 The occupancy covariate in the false-positive process
+
+In the nine homogeneous cells, the model with the occupancy covariate in the false-positive process had the same bias as the constant-rate model fitted to the same datasets (−0.05 to −0.01 in both) and a similar root mean squared error (0.14–0.17 in both), its intervals differed in width by −0.2% to +1.7%, and the false-positive rate itself stayed calibrated, with coverage of 0.91–0.96 (Table S3). Under structured confusion, in contrast, the same model widened the interval of the environmental effect on the first 100 datasets of the main arm (mean width 0.54–0.62, against 0.50–0.53 for the constant-rate model), although its bias stayed at +0.22 to +0.62, which suggests that part of the unmodelled confusion widened the interval instead of shifting the slope. We did not fit this model under unstructured heterogeneity.
+
+**Table S3.** The constant-rate model and the model with the occupancy covariate in the false-positive process (p10 ~ x), fitted to the first 100 datasets of the homogeneous and structured-confusion cells of the main simulation: coverage, bias, root mean squared error (RMSE) and mean width of the 95% interval of the environmental effect, and coverage of the false-positive rate.
+
+```{r table-s2}
+fits <- rd("fits.csv")
+fits |>
+  filter(regime %in% c("homogeneous", "structured"), model %in% c("constant", "fp_x")) |>
+  arrange(regime, p10, verified_coverage, model) |>
+  transmute(Regime = regime, p10 = num(p10, 2), Verified = pct(verified_coverage),
+            Model = mods[model], Coverage = num(slope.coverage), Bias = sgn(slope.bias),
+            RMSE = num(slope.rmse), Width = num(slope.width), `p10 coverage` = num(p10.coverage)) |>
+  knitr::kable(align = "lllcrrrrr")
+```
+
+## S1.3 The site random effect on the false-positive rate
+
+In the four unstructured cells, we fitted a site random intercept on the logit of the false-positive rate, with a half-Normal(0, 1) prior on its standard deviation, and, because this model mixed slowly, we refitted it to the same datasets with 2,000 warm-up and 2,000 sampling iterations. Under unstructured heterogeneity, the site random effect on the false-positive rate, fitted to the same datasets as the constant-rate model, covered the environmental effect in 93–95% of replicates, against 67–93%, with a bias of −0.03 to +0.01, against +0.04 to +0.19, and it covered the mean false-positive rate in 89–92% of replicates, against none (Table S4). Its intervals of the environmental effect were wider, mainly at the higher false-positive rate (mean width 0.66–0.69, against 0.55).
+
+Its posterior was also harder to sample. With 1,000 warm-up and 1,000 sampling iterations, the potential scale reduction factor exceeded 1.01 in 29–60% of fits and the median of the smallest bulk ESS was 377, against about 4,000 for the constant-rate model. Refitting the same datasets with 2,000 warm-up and 2,000 sampling iterations reduced this share to 5–26% of fits (maximum 1.03) and raised the median of the smallest bulk ESS to 739 (566–944 across cells), while leaving the estimates almost unchanged (correlation of 0.9997 between the two runs, largest difference 0.016) and the coverage of the environmental effect at 92–95%. Moreover, that coverage was 0.94 both in the 52 refits whose potential scale reduction factor exceeded 1.01 and in the others. Therefore, the recovery does not seem to be an artefact of poor mixing, although some fits still fell short of the usual thresholds.
+
+**Table S4.** The constant-rate model and the site random effect on the false-positive rate, fitted with 1,000 + 1,000 and with 2,000 + 2,000 iterations to the same 100 datasets of each unstructured cell: coverage, bias and mean width of the 95% interval of the environmental effect, coverage of the mean false-positive rate, share of fits whose potential scale reduction factor (R-hat) exceeded 1.01, and median of the smallest bulk effective sample size (ESS) of each fit, reported for the longer chains only.
+
+```{r table-s3}
+long <- rd("random_fp_long.csv")
+bind_rows(fits |> filter(regime == "unstructured"), long) |>
+  mutate(Model = c(constant = "Constant rate", random_fp = "Site random effect (1,000 + 1,000)",
+                   random_fp_long = "Site random effect (2,000 + 2,000)")[model]) |>
+  arrange(p10, verified_coverage, model) |>
+  transmute(p10 = num(p10, 2), Verified = pct(verified_coverage), Model,
+            Coverage = num(slope.coverage), Bias = sgn(slope.bias), Width = num(slope.width),
+            `p10 coverage` = num(p10.coverage), `R-hat > 1.01` = pct(rhat_over_1.01),
+            `Median min. ESS` = ifelse(is.na(median_min_ess_bulk), "–", round(median_min_ess_bulk))) |>
+  knitr::kable(align = "lllrrrrrr")
+```
+
+## S1.4 Heterogeneity in true detection
+
+In simulations of the crywolf package in which only true detection varied among sites, a model with a site effect on false positives alone attributed that variation to false positives, estimating a median standard deviation of 1.77 on the logit scale for a true value of zero, whereas a site effect on true detection recovered it; fitted together, the two effects recovered both standard deviations but mixed slowly. With 30% of sites verified, detection that varied among occupied sites also shifted the environmental effect towards zero (bias of +0.05 when detection varied among sites with a standard deviation of 1 on the logit scale, and +0.09 when false positives also varied, against −0.05 without either), although its coverage stayed near nominal (Provete et al. 2026a).
+
+## S1.5 Cross-validation and posterior predictive checks
+
+We compared the constant-rate model and the model with the occupancy covariate in the false-positive process through the difference in expected log predictive density (ELPD) summed over sites, with its standard error computed from the paired differences of the sites, and we counted how often the difference favoured the covariate-dependent model, exceeded twice its standard error, and exceeded four units, below which two models are considered to make similar predictions (Sivula et al. 2025). The posterior predictive check used the Freeman–Tukey statistic of the detections per site over 500 posterior draws, and we counted the replicates with a posterior predictive p-value below 0.05.
+
+In the four cells with structured confusion, leave-one-site-out cross-validation preferred the model with the occupancy covariate in the false-positive process by more than four units of expected log predictive density in 94–100% of replicates (median difference of 16–32), whereas with homogeneous false positives it did so in at most 1% of replicates, and the median difference slightly favoured the constant-rate model (−0.9 to −0.6; Table S5). A stricter criterion, a difference larger than twice its standard error, never preferred the covariate model under homogeneous false positives, but missed structured confusion in 10–65% of replicates, mostly at the higher false-positive rate. The posterior predictive check flagged the constant-rate model in every replicate with structured confusion and in at most 4% of those with homogeneous false positives. However, it also flagged that model in every replicate with unstructured heterogeneity, and it flagged the model with the occupancy covariate in 98–100% of the structured replicates, whereas it never flagged the site random effect under unstructured heterogeneity. We ran cross-validation only under homogeneous and strongly structured false positives, and whether weaker confusion, which still reduced coverage at an effect of 1.0 when the correlation was 0.7 or higher, leaves a detectable signal remains to be tested.
+
+**Table S5.** Comparison of the constant-rate model and the model with the occupancy covariate in the false-positive process (p10 ~ x) by leave-one-site-out cross-validation, and posterior predictive checks of both, in the homogeneous and structured-confusion cells (100 replicates each). The first three columns of results give the share of replicates in which the difference in expected log predictive density (elpd) favoured p10 ~ x, exceeded twice its standard error, and exceeded four units; the last two give the share in which the Freeman–Tukey posterior predictive p-value was below 0.05.
+
+```{r table-s4}
+rd("detection.csv") |>
+  arrange(regime, p10, verified_coverage) |>
+  transmute(Regime = regime, p10 = num(p10, 2), Verified = pct(verified_coverage),
+            `elpd favours p10 ~ x` = pct(loo_prefers_fp_x),
+            `> 2 SE` = pct(loo_prefers_fp_x_2se), `> 4 units` = pct(loo_prefers_fp_x_4),
+            `Median elpd difference` = sgn(median_elpd_diff, 1),
+            `PPC flags constant` = pct(ppc_flags_constant_05),
+            `PPC flags p10 ~ x` = pct(ppc_flags_fp_x_05)) |>
+  knitr::kable(align = "lllrrrrrr")
+```
+
+## S1.6 Software and sampling diagnostics
+
+The R package crywolf (version 1.9.0; Provete et al. 2026a) takes one formula for each process (occupancy, true detection, false positives and the verified method), fits both the site-confirmation and the observation-confirmation designs, and optionally adds a recorder random intercept on true detection and site random intercepts on the false-positive rate, on true detection, or on both. Leave-one-site-out cross-validation integrates the site random effects out of each site's log-likelihood by Gauss–Hermite quadrature, so that a left-out site is predicted without its own effect, and posterior predictive checks compare observed and replicated detections per site. For the design of a survey, the package simulates data with the sites, covariates, occasions and verification of a fitted model and scores the calibration of the intervals of alternative models, and it runs simulation-based calibration of the model itself. The comparison of log densities between crywolf and the Stan programs of the fpcalib compendium reported in the main text was run with a development version whose Stan programs are identical to those of version 1.9.0.
+
+The 4,300 fits of the main design had a single divergent transition (0.02%), with the potential scale reduction factor at or below 1.008 throughout and effective sample sizes sufficient for every parameter. A previous run showed residual divergences, which we traced to a funnel in the recorder variance: the head-to-head cells generate no recorder effect, yet the model was estimating a recorder-level variance from a handful of groups whose true value is zero. Dropping the recorder random effect from the likelihood in only those cells, which is legitimate because the data contain no such effect and which leaves the estimand unchanged, removed the divergences without moving the estimates beyond Monte Carlo error. The three arms of the covariate-dependent model (3,200 fits in all) and the intensity block (1,200 fits) had no divergent transitions. The potential scale reduction factor stayed at or below 1.008 in the intensity block and exceeded 1.01 in only four fits, two in the practical fix (maximum 1.014) and two with the noisy proxy (maximum 1.019), whereas occuFP degenerated in 2.8% of the practical-fix fits and in 0.25% of the intensity fits.
+
+The 3,400 fits of the additional checks had five divergent transitions in all. The potential scale reduction factor exceeded 1.01 in a single fit with the occupancy covariate in the false-positive process (1.73), and in 29–60% of the fits with a site random effect on the false-positive rate (maximum 1.10), whose smallest bulk ESS had a median of 377. When these fits were repeated with 2,000 warm-up and 2,000 sampling iterations, it exceeded 1.01 in 13% of them (maximum 1.03; median smallest bulk ESS 739; no divergent transitions; Section S1.3), and Pareto k exceeded 0.7 at one or more sites in 20 fits. The 8,200 Bayesian fits under observation confirmation had three divergent transitions, their potential scale reduction factor stayed at or below 1.008, and the smallest bulk ESS was 1,776; the occupancy model that ignores false positives returned no finite estimate or standard error in 24 of 1,800 datasets, which we excluded.
+
+In the nightjar example, the six fits reported in the main text and in Figure 7 had no divergent transitions, the smallest bulk ESS was 502 over all parameters and above 3,700 for the parameters reported in the main text, and the potential scale reduction factor exceeded 1.01 only for the detection intercept and the gap between the true- and false-positive intercepts in the constant-rate fit at 0.4 (maximum 1.011). Repeated runs with the same settings and seed did not reproduce these fits exactly, probably because the likelihood is summed in parallel within each chain, in an order that varies between runs. In two repeats, the posterior means differed from those of the reported fits by at most 0.035 on the logit scale, mostly in the detection parameters, and the estimates reported in the main text by at most 0.01; one of these repeats had a single divergent transition, in the constant-rate fit at the threshold of 0.2.

@@ -10,8 +10,8 @@ run in seconds without them.
    replicates per cell and 300 for the structured-confusion cells. Fits the
    constant-p10 Stan model and `occuFP`. Writes `data/fp_sim_results.rds` and
    `data/fp_sim_summary.rds`.
-2. `02_make_figures.R`: coverage figures of the main study, written to
-   `analysis/figures/` (not tracked by git).
+2. `02_make_figures.R`: superseded; coverage figures of the first run of 100
+   replicates, kept for the record.
 3. `03_run_fix_arm.R`: the false-positive rate modelled on the occupancy
    covariate, in Stan and in `occuFP`. Writes `data/fp_fix_*.rds`.
    `00_smoke_test_fix.R` is a quick check of this arm.
@@ -23,8 +23,8 @@ run in seconds without them.
 5. `05_confusion_intensity.R`: strength × correlation of the confusion under the
    constant-p10 model. Writes `data/fp_intensity_*.rds` and the diagnostic
    figure `manuscript/figures/figF_confusion_intensity.pdf`.
-6. `06_manuscript_figures.R`: Figures 6 and 7 of the manuscript from the
-   summaries of 01, 03, 04, and 05.
+6. `06_manuscript_figures.R`: superseded by 14; the earlier drawing of
+   Figures 5 and 6 of the manuscript.
 
 7. `07_revision_checks.R`: checks added in the revision of the manuscript,
    refitted with the R package crywolf to the first 100 datasets of 17 cells of
@@ -54,6 +54,27 @@ run in seconds without them.
     of 07, refitted with 2,000 + 2,000 iterations to the same 400 datasets of
     the unstructured cells, because it mixed slowly with 1,000 + 1,000. Writes
     `data/fp_revision_rfp_long_results.rds`. Run on EC2 spot instances.
+
+13. `13_fig4_caterpillars.R`: Figure 4 of the manuscript, per-replicate
+    intervals of four cells of 01.
+14. `14_figs_3_5_6.R`: Figures 3, 5 and 6 of the manuscript from the
+    summaries of 01, 03, 04 and 05.
+15. `15_nightjar.R`: the nightjar example, six fits of crywolf 1.9.0 to the
+    curiango data of that package (about 9 min each on 16 cores). Writes
+    `data/nightjar_fits.rds`, the fits reported in the manuscript; given another
+    output file, it compares the new fits with the stored ones. Runs with the
+    same seed are not bitwise identical, as the likelihood is summed in
+    parallel within each chain: `data/nightjar_fits_rerun.rds`, a repeat on
+    2026-10-29, differs by up to 0.035 in the posterior means and by up to 0.01
+    in the estimates reported in the text. crywolf 1.9.0 is installed in a private library,
+    `.lib-crywolf-1.9.0/`, as the header of the script shows.
+16. `16_fig7_nightjar.R`: Figure 7 of the manuscript from the fits of 15.
+
+`manuscript/reproduce.qmd` draws Figures 3 to 7 and recomputes every number
+reported in the Results and Discussion of the manuscript from `data/`, in
+seconds and without Stan; it stops if any number in the text disagrees with
+the data (render with `-P strict:false` for a report instead).
+`manuscript/appendix-S1.qmd` renders Appendix S1 from the same files.
 
 In 08, 10 and 11 the seed of a task depends on `REPS`, so a test run with
 fewer replicates must use another job folder: its files would otherwise be

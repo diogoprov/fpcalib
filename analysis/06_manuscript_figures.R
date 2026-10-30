@@ -1,4 +1,6 @@
 # =============================================================================
+# SUPERSEDED (0.3.0): Figures 5 and 6 of the manuscript are now drawn by
+# 14_figs_3_5_6.R from the same summaries. Kept for the record.
 # 06_manuscript_figures.R
 # -----------------------------------------------------------------------------
 # Figures 6 and 7 of the manuscript, drawn from the scored summaries only (no
