@@ -337,7 +337,7 @@
 <circle cx="1010" cy="1220" r="10" fill="#2b2b2b"/>
 <text x="1030" y="1226" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">constant p<tspan dy='5' font-size='16'>10</tspan></text>
 <circle cx="1260" cy="1220" r="10" fill="#C8691C"/><circle cx="1260" cy="1220" r="17" fill="none" stroke="#C8691C" stroke-width="2"/>
-<text x="1286" y="1226" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">+ p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> ~ w (r = 1, 0.7)</tspan></text>
+<text x="1286" y="1226" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">+ p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> ~ w (cor(w, x) = 1, 0.7)</tspan></text>
 <rect x="1680" y="1210" width="20" height="20" rx="3" fill="#C8691C"/>
 <text x="1710" y="1226" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">intensity (constant p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'>)</tspan></text>
 <circle cx="1145" cy="730" r="17" fill="none" stroke="#2A6FB0" stroke-width="2"/>
@@ -356,7 +356,7 @@
 <line x1="30" y1="965" x2="850" y2="965" stroke="#d9d9d9" stroke-width="1.5"/>
 <text x="30" y="1010" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="42" fill="#2b2b2b" text-anchor="start" font-weight="bold" font-style="normal">d</text>
 <text x="80" y="1006" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">observation confirmation: no verified sites, a share of occasions checked</text>
-<text x="108" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">cor</text>
+<text x="30" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="start" font-weight="normal" font-style="normal">cor(w, x)</text>
 <text x="200" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">effect</text>
 <text x="200" y="1091" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="21" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> 0.05</tspan></text>
 <text x="200" y="1135" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="21" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> 0.20</tspan></text>

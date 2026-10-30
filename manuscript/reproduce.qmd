@@ -1,0 +1,363 @@
+---
+title: "Reproducing the figures and numbers of the manuscript"
+subtitle: "Verifying more is not enough when false positives track the environmental gradient in occupancy models"
+format:
+  html:
+    toc: true
+    embed-resources: true
+params:
+  strict: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+# Reads only the scored results in data/ (no Stan fits); renders in seconds.
+# Render from the compendium root: quarto render manuscript/reproduce.qmd
+knitr::opts_knit$set(root.dir = "..")
+```
+
+```{r packages}
+library(tidyverse)
+library(patchwork)
+```
+
+This document redraws Figures 3 to 7 of the manuscript and recomputes every
+result that the text reports, from the scored outputs of the scripts in
+`analysis/`. Each number is shown as the text gives it next to the value
+computed here, and the document **fails to render** if any of them disagree,
+so that the text and the data cannot drift apart. Figures 1 and 2 are schematic
+(`R/fig_dag_v2.R` and `manuscript/figures/make_scheme_fig2.py`).
+
+```{r data}
+main <- readRDS("data/fp_sim_summary.rds")
+main_reps <- readRDS("data/fp_sim_results.rds")
+fix  <- readRDS("data/fp_fix_summary.rds")
+fix_reps <- readRDS("data/fp_fix_results.rds")
+pc   <- readRDS("data/fp_positive_control_summary.rds")
+pc_reps <- readRDS("data/fp_positive_control_results.rds")
+int  <- readRDS("data/fp_intensity_summary.rds")
+int_reps <- readRDS("data/fp_intensity_results.rds")
+rev  <- readRDS("data/fp_revision_summary.rds")
+nj   <- readRDS("data/nightjar_fits.rds")
+
+# numbers as the manuscript prints them: half rounded up, a true minus sign,
+# an explicit plus where the text gives one, en-dash ranges
+num <- function(x, d = 2, plus = FALSE) {
+  s <- formatC(round(x + sign(x) * 1e-9, d), format = "f", digits = d)
+  s <- if_else(plus & round(x, d) > 0, paste0("+", s), s)
+  str_replace(s, "^-", "−")
+}
+pct <- function(x, d = 0) num(100 * x, d)
+rng <- function(x, d = 2, f = num) paste0(f(min(x), d), "–", f(max(x), d))
+rng_pct <- function(x) paste0(pct(min(x)), "–", pct(max(x)), "%")
+
+claims <- tibble(section = character(), quote = character(), text = character(),
+                 computed = character(), tol = numeric())
+# tol > 0 compares the numbers in text and computed within tol instead of
+# requiring the same string (used for the nightjar fits, see claim_nj below)
+claim <- function(section, quote, text, computed, tol = 0) {
+  claims <<- add_row(claims, section = section, quote = quote, text = text,
+                     computed = computed, tol = tol)
+}
+numbers_in <- \(s) as.numeric(str_extract_all(str_replace_all(s, "\u2212", "-"),
+                                               "-?[0-9]+\\.?[0-9]*")[[1]])
+agree <- function(text, computed, tol) {
+  if (tol == 0) return(text == computed)
+  a <- numbers_in(text); b <- numbers_in(computed)
+  length(a) == length(b) && all(abs(a - b) <= tol + 1e-9)
+}
+# regimes and the four cells shared by all of them in Figure 3
+main <- main |>
+  mutate(regime = case_when(conf_effect > 0 ~ "structured",
+                            beta_conc > 0 ~ "unstructured", TRUE ~ "homogeneous"))
+core <- \(d) filter(d, p10 %in% c(0.05, 0.20), coverage %in% c(0.1, 0.3))
+mw <- rev$main_width_rmse
+```
+
+## Figure 3: the three false-positive regimes
+
+```{r fig3, fig.width=7, fig.height=3.125}
+# each script runs in its own environment, so its objects stay out of the way
+run <- function(script) { e <- new.env(); source(script, local = e); e }
+figs356 <- run("analysis/14_figs_3_5_6.R")
+figs356$fig3
+```
+
+```{r claims-regimes}
+h <- core(filter(main, regime == "homogeneous"))
+claim("Results 1", "true false-positive rate in 95%", "95",
+      pct(mean(h$stan_p10_coverage95)))
+claim("Results 1", "true environmental effect in 96% of replicates", "96",
+      pct(mean(h$stan_b1_coverage95)))
+claim("Results 1", "bias of −0.03 for the environmental effect", "−0.03",
+      num(mean(h$stan_b1_bias)))
+claim("Results 1", "occuFP matched it (coverage of 0.94 and 0.96)", "0.94 and 0.96",
+      paste(num(mean(h$occufp_p10_coverage95)), "and", num(mean(h$occufp_b1_coverage95))))
+
+u <- core(filter(main, regime == "unstructured"))
+claim("Results 2", "the coverage of the rate itself fell to 0.00", "0.00",
+      num(mean(u$stan_p10_coverage95)))
+claim("Results 2", "bias of −0.08", "−0.08",
+      num(mean(u$stan_p10_bias)))
+claim("Results 2", "with a coverage of 0.81", "0.81", num(mean(u$stan_b1_coverage95)))
+claim("Results 2", "0.91–0.92 at the lower", "0.91–0.92",
+      rng(u$stan_b1_coverage95[u$p10 == 0.05]))
+claim("Results 2", "0.65–0.74 at the higher false-positive rate", "0.65–0.74",
+      rng(u$stan_b1_coverage95[u$p10 == 0.20]))
+
+s <- core(filter(main, regime == "structured"))
+claim("Results 3", "coverage of the false-positive rate fell to 0.04", "0.04",
+      num(mean(s$stan_p10_coverage95)))
+claim("Results 3", "that of the environmental effect to 0.05", "0.05",
+      num(mean(s$stan_b1_coverage95)))
+s10 <- filter(s, coverage == 0.1)
+claim("Results 3", "at the lower rate it was +0.43 (10% of sites verified)", "+0.43",
+      num(s10$stan_b1_bias[s10$p10 == 0.05], plus = TRUE))
+claim("Results 3", "estimated near −0.37", "−0.37",
+      num(-0.8 + s10$stan_b1_bias[s10$p10 == 0.05]))
+claim("Results 3", "at the higher rate it reached +0.91", "+0.91",
+      num(s10$stan_b1_bias[s10$p10 == 0.20], plus = TRUE))
+claim("Results 3", "crossed zero to +0.11", "+0.11",
+      num(-0.8 + s10$stan_b1_bias[s10$p10 == 0.20], plus = TRUE))
+claim("Results 3", "mean width 0.50–0.53", "0.50–0.53",
+      rng(mw$stan.width[mw$regime == "structured"]))
+claim("Results 3", "against 0.55–0.59", "0.55–0.59",
+      rng(mw$stan.width[mw$regime == "homogeneous"]))
+claim("Results 3", "root mean squared error ... rose from 0.14–0.17", "0.14–0.17",
+      rng(mw$stan.rmse[mw$regime == "homogeneous"]))
+claim("Results 3", "to 0.40–0.92", "0.40–0.92",
+      rng(mw$stan.rmse[mw$regime == "structured"]))
+
+claim("Results 9", "coverage of the environmental effect was 0.76 under unstructured heterogeneity",
+      "0.76", num(mean(u$occufp_b1_coverage95)))
+claim("Results 9", "and 0.04 under structured confusion", "0.04",
+      num(mean(s$occufp_b1_coverage95)))
+claim("Results 9", "biased by about the same amount (−0.08)", "−0.08",
+      num(mean(u$occufp_p10_bias)))
+claim("Results 9", "covered the false-positive rate in 2% of replicates", "2",
+      pct(mean(u$occufp_p10_coverage95)))
+```
+
+## Figure 4: per-replicate intervals
+
+```{r fig4, fig.width=7, fig.height=6}
+run("analysis/13_fig4_caterpillars.R")$fig
+```
+
+## Figure 5: verification and covariates in the false-positive process
+
+```{r fig5, fig.width=7, fig.height=3.03}
+figs356$fig5
+```
+
+```{r claims-verification}
+sv <- filter(main, regime == "structured") |> arrange(p10, coverage)
+lo <- filter(sv, p10 == 0.05); hi <- filter(sv, p10 == 0.20)
+claim("Results 4", "coverage crept from 0.08 to 0.20", "0.08 to 0.20",
+      paste(num(first(lo$stan_b1_coverage95)), "to", num(last(lo$stan_b1_coverage95))))
+claim("Results 4", "stayed at 0.00 at the higher one", "0.00",
+      num(max(hi$stan_b1_coverage95)))
+claim("Results 4", "from +0.43 to +0.38", "+0.43 to +0.38",
+      paste(num(first(lo$stan_b1_bias), plus = TRUE), "to", num(last(lo$stan_b1_bias), plus = TRUE)))
+claim("Results 4", "and from +0.91 to +0.82", "+0.91 to +0.82",
+      paste(num(first(hi$stan_b1_bias), plus = TRUE), "to", num(last(hi$stan_b1_bias), plus = TRUE)))
+
+w <- filter(pc, proxy_cor == 1); px <- filter(pc, proxy_cor == 0.7)
+claim("Results 5", "covered the environmental effect in 90–97% of replicates", "90–97%",
+      rng_pct(w$fpcov_b1_cov95))
+claim("Results 5", "against 0.00–0.23 for the constant-rate model", "0.00–0.23",
+      rng(w$const_b1_cov95))
+claim("Results 5", "with a bias between −0.04 and +0.01", "−0.04 and +0.01",
+      paste(num(min(w$fpcov_b1_bias)), "and", num(max(w$fpcov_b1_bias), plus = TRUE)))
+claim("Results 5", "mean estimates of 1.49–1.52", "1.49–1.52", rng(w$fpcov_g1_est))
+claim("Results 5", "with coverage of 0.92–0.98", "0.92–0.98", rng(w$fpcov_g1_cov95))
+
+fx <- filter(fix, conf_cor == 0.7) |>
+  left_join(filter(main, regime == "structured") |>
+              select(p10, coverage, const_bias = stan_b1_bias), by = c("p10", "coverage"))
+claim("Results 5", "coverage rose to 0.48–0.66 at the lower false-positive rate", "0.48–0.66",
+      rng(fx$fixstan_b1_coverage95[fx$p10 == 0.05]))
+claim("Results 5", "and to 0.08–0.48 at the higher one", "0.08–0.48",
+      rng(fx$fixstan_b1_coverage95[fx$p10 == 0.20]))
+claim("Results 5 & Discussion 3", "the bias fell by 34–62%", "34–62%",
+      rng_pct(1 - fx$fixstan_b1_bias / fx$const_bias))
+fw <- filter(fix, conf_cor == 1) |> arrange(p10)
+claim("Results 5", "coverage of 0.96 and 0.95 at the two false-positive rates", "0.96 and 0.95",
+      paste(num(fw$fixstan_b1_coverage95), collapse = " and "))
+claim("Results 5", "against 0.01 and 0.00 for the constant-rate model", "0.01 and 0.00",
+      paste(num(fw$const_b1_coverage95), collapse = " and "))
+claim("Results 5", "occuFP: coverage of 0.44–0.63", "0.44–0.63",
+      rng(fx$fixocc_b1_coverage95[fx$p10 == 0.05]))
+claim("Results 5", "and 0.07–0.46 at the two rates", "0.07–0.46",
+      rng(fx$fixocc_b1_coverage95[fx$p10 == 0.20]))
+claim("Results 5", "of 0.94 and 0.97 when w = x", "0.94 and 0.97",
+      paste(num(fw$fixocc_b1_coverage95), collapse = " and "))
+
+claim("Results 6", "its coverage rose only to 0.29–0.53", "0.29–0.53",
+      rng(px$fpcov_b1_cov95[px$p10 == 0.05]))
+claim("Results 6", "and 0.01–0.13 at the two false-positive rates", "0.01–0.13",
+      rng(px$fpcov_b1_cov95[px$p10 == 0.20]))
+claim("Results 6", "the bias fell by 17–37%", "17–37%",
+      rng_pct(1 - px$fpcov_b1_bias / px$const_b1_bias))
+pxh <- filter(px, p10 == 0.20) |> arrange(coverage)
+claim("Results 6", "bias fell from +0.77 with 10% ... to +0.52 with 90%", "+0.77 to +0.52",
+      paste(num(first(pxh$fpcov_b1_bias), plus = TRUE), "to", num(last(pxh$fpcov_b1_bias), plus = TRUE)))
+claim("Results 6", "against +0.93 to +0.81 for the constant-rate model", "+0.93 to +0.81",
+      paste(num(first(pxh$const_b1_bias), plus = TRUE), "to", num(last(pxh$const_b1_bias), plus = TRUE)))
+```
+
+## Figure 6: strength of the confusion
+
+```{r fig6, fig.width=7, fig.height=3.5}
+figs356$fig6
+```
+
+```{r claims-intensity}
+weak <- filter(int, conf_effect <= 0.5)
+at <- \(e, r, col) int[[col]][int$conf_effect == e & int$conf_cor == r]
+claim("Results 7", "contained the true value in 94–96% of replicates", "94–96%",
+      rng_pct(weak$stan_b1_coverage95))
+claim("Results 7", "absolute bias no larger than 0.012", "0.012",
+      num(max(abs(weak$stan_b1_bias)), 3))
+claim("Results 7", "at an effect of 1.0, coverage fell from 0.92 to 0.76 and 0.63", "0.92, 0.76, 0.63",
+      paste(num(map_dbl(c(0.3, 0.7, 1), \(r) at(1, r, "stan_b1_coverage95"))), collapse = ", "))
+claim("Results 7", "at an effect of 1.5 it fell from 0.68 to 0.13 and 0.02", "0.68, 0.13, 0.02",
+      paste(num(map_dbl(c(0.3, 0.7, 1), \(r) at(1.5, r, "stan_b1_coverage95"))), collapse = ", "))
+claim("Results 7", "with the bias reaching +0.60", "+0.60",
+      num(max(int$stan_b1_bias), plus = TRUE))
+claim("Results 7", "occuFP: coverage of 0.94–0.96 under weak confusion", "0.94–0.96",
+      rng(weak$occufp_b1_coverage95))
+claim("Results 7", "and of 0.02 at the strongest", "0.02", num(at(1.5, 1, "occufp_b1_coverage95")))
+claim("Results 7", "at an effect of 0.5 and cor(w, x) = 1.0 its coverage was already 0.50", "0.50",
+      num(at(0.5, 1, "stan_p10_coverage95")))
+claim("Results 7", "against 0.95 for the environmental effect", "0.95",
+      num(at(0.5, 1, "stan_b1_coverage95")))
+m30 <- filter(main, regime == "structured", p10 == 0.05, coverage == 0.3)
+claim("Results 7", "repeat cell: coverage of 0.13 and a bias of +0.42", "0.13 and +0.42",
+      paste(num(at(1.5, 0.7, "stan_b1_coverage95")), "and", num(at(1.5, 0.7, "stan_b1_bias"), plus = TRUE)))
+claim("Results 7", "against 0.11 and +0.42 in the main run", "0.11 and +0.42",
+      paste(num(m30$stan_b1_coverage95), "and", num(m30$stan_b1_bias, plus = TRUE)))
+```
+
+## Costs of the remedies and their detection
+
+```{r claims-checks}
+fits <- rev$fits
+hom <- filter(fits, regime == "homogeneous")
+claim("Results 10", "that model covered the environmental effect in 91–98% of replicates", "91–98%",
+      rng_pct(hom$slope.coverage[hom$model == "fp_x"]))
+claim("Results 10", "against 89–97% for the constant-rate model", "89–97%",
+      rng_pct(hom$slope.coverage[hom$model == "constant"]))
+det <- rev$detection
+claim("Results 10", "preferred that model by more than four units of ELPD in 94–100% of replicates",
+      "94–100%", rng_pct(det$loo_prefers_fp_x_4[det$regime == "structured"]))
+claim("Results 10", "against at most 1% with homogeneous false positives", "1",
+      pct(max(det$loo_prefers_fp_x_4[det$regime == "homogeneous"])))
+
+# observation confirmation: share of the bias of the naive model removed
+oc <- rev$obsconfirm_clare
+red <- oc |>
+  select(conf_effect, p10, frac_confirmed, model, slope.bias, slope.coverage) |>
+  pivot_wider(names_from = model, values_from = c(slope.bias, slope.coverage)) |>
+  # capped at 100%: one cell overshoots to a bias of -0.012 (MCSE 0.014),
+  # which the text counts as all of the bias removed
+  mutate(removed = pmin(1, 1 - slope.bias_constant / slope.bias_naive))
+claim("Results 10", "removed 47–100% of the bias of a model that ignored false positives",
+      "47–100%", rng_pct(red$removed))
+o7 <- filter(rev$obsconfirm, regime == "structured", model == "constant", frac_confirmed == 0.3) |>
+  arrange(p10)
+claim("Results 10", "checking 30% of occasions raised its coverage only to 0.61 and 0.18",
+      "0.61 and 0.18", paste(num(o7$slope.coverage), collapse = " and "))
+claim("Results 10", "covered the environmental effect in 92–98% of replicates at cor(w, x) = 1.0",
+      "92–98%", rng_pct(oc$slope.coverage[oc$model == "fp_x"]))
+low <- filter(red, removed < 0.75)
+claim("Discussion 2", "in the cells where the correction removed 47–74% of the bias", "47–74%",
+      rng_pct(low$removed))
+claim("Discussion 2", "its 95% interval contained the true value in at most 4% of replicates", "4",
+      pct(max(low$slope.coverage_constant)))
+```
+
+## Figure 7: the nightjar data
+
+```{r fig7, fig.width=7.5, fig.height=3.6}
+run("analysis/16_fig7_nightjar.R")$fig7
+```
+
+```{r claims-nightjar}
+tab <- map_dfr(nj$fits, \(f) mutate(f$table, fp = f$fp, threshold = f$threshold))
+get <- \(v, th, fp = "~ 1") filter(tab, variable == v, threshold == th, .data$fp == !!fp)
+ci <- \(r) paste0(num(r$mean), " (", num(r$lower), " to ", num(r$upper), ")")
+# repeated runs of 15_nightjar.R with the same seed differ slightly (the
+# likelihood is summed in parallel within each chain), by up to 0.01 in these
+# estimates, so the nightjar estimates are checked within that tolerance; the
+# diagnostics describe the stored fits and are checked exactly
+claim_nj <- \(...) claim(..., tol = 0.01)
+# classifier scores of the curiango data, from crywolf (installed for 15_nightjar.R)
+conf <- local({ e <- new.env(); data("curiango", package = "crywolf", envir = e,
+                 lib.loc = c(".lib-crywolf-1.9.0", .libPaths())); e$curiango$minutes$conf_custom })
+claim("Results 11", "fell from 6.8% at a threshold of 0.2 to 0.6% at 0.8", "6.8% to 0.6%",
+      paste0(pct(mean(conf >= 0.2), 1), "% to ", pct(mean(conf >= 0.8), 1), "%"))
+claim_nj("Results 11", "mean false-positive rate per recording fell from 2.60% to 0.06%", "2.60% to 0.06%",
+      paste0(pct(get("p10_bar", 0.2)$mean, 2), "% to ", pct(get("p10_bar", 0.8)$mean, 2), "%"))
+claim_nj("Results 11", "temperature effect changed sign, to 0.16 (95% credible interval 0.05 to 0.28)",
+      "0.16 (0.05 to 0.28)", ci(get("occ_temp", 0.2)))
+claim_nj("Results 11", "intercept of the verified process ... fell from 0.94 (0.70 to 1.20) at 0.4",
+      "0.94 (0.70 to 1.20)", ci(get("verified_(Intercept)", 0.4)))
+claim_nj("Results 11", "to 0.14 (−0.05 to 0.34)", "0.14 (−0.05 to 0.34)",
+      ci(get("verified_(Intercept)", 0.2)))
+claim_nj("Results 12", "false positives ... rose with temperature (0.27 on the logit scale, 0.21 to 0.34)",
+      "0.27 (0.21 to 0.34)", ci(get("fp_temp", 0.2, "~ temp + rh")))
+claim_nj("Results 12", "temperature effect on nightly use shrank from 0.16 to 0.09", "0.09",
+      num(get("occ_temp", 0.2, "~ temp + rh")$mean))
+claim_nj("Results 12", "the false-positive rate fell with humidity (−0.38, −0.49 to −0.26)",
+      "−0.38 (−0.49 to −0.26)", ci(get("fp_rh", 0.4, "~ temp + rh")))
+dg <- map_dfr(nj$fits, \(f) as_tibble(f$diagnostics[c("max_rhat", "divergences")]))
+claim("Results 12", "potential scale reduction factor at or below 1.011", "1.011",
+      num(max(dg$max_rhat), 3))
+claim("Results 12", "with no divergent transitions", "0", as.character(sum(dg$divergences)))
+```
+
+## Sampling behaviour
+
+```{r claims-sampling}
+arms <- bind_rows(
+  transmute(fix_reps, rhat = fixstan_max_rhat, ndiv = fixstan_ndiv),
+  transmute(pc_reps, rhat = fpcov_max_rhat, ndiv = fpcov_ndiv),
+  transmute(int_reps, rhat = stan_max_rhat, ndiv = stan_ndiv))
+claim("Results 13", "The 4,300 fits of the main design", "4,300",
+      format(nrow(main_reps), big.mark = ","))
+claim("Results 13", "had a single divergent transition", "1",
+      as.character(sum(main_reps$stan_ndiv, na.rm = TRUE)))
+claim("Results 13", "at or below 1.008", "1.008", num(max(main_reps$stan_max_rhat, na.rm = TRUE), 3))
+claim("Results 13", "the 4,400 fits of the covariate-dependent arms and of the intensity block",
+      "4,400", format(nrow(arms), big.mark = ","))
+claim("Results 13", "had none", "0", as.character(sum(arms$ndiv, na.rm = TRUE)))
+claim("Results 13", "above 1.01 in only four fits", "4",
+      as.character(sum(arms$rhat > 1.01, na.rm = TRUE)))
+claim("Results 13", "(maximum 1.019)", "1.019", num(max(arms$rhat, na.rm = TRUE), 3))
+```
+
+## Every number, text against data
+
+```{r check}
+claims <- mutate(claims, ok = pmap_lgl(list(text, computed, tol), agree))
+knitr::kable(select(claims, section, quote, text, computed, ok),
+             col.names = c("Section", "Sentence in the manuscript", "Text", "Computed", "Match"))
+bad <- filter(claims, !ok)
+# with strict: false (quarto render ... -P strict:false) the mismatches are
+# reported in the table instead of stopping the render
+if (nrow(bad) > 0 && isTRUE(params$strict))
+  stop(nrow(bad), " number(s) in the manuscript disagree with the data:\n",
+       paste0("  ", bad$section, ": ", bad$quote, " [text ", bad$text,
+              ", computed ", bad$computed, "]", collapse = "\n"))
+```
+
+`r if (nrow(bad) == 0) paste("All", nrow(claims), "numbers agree with the data.") else paste0("**", nrow(bad), " of ", nrow(claims), " numbers disagree with the data** (rows marked FALSE above).")`
+
+```{r session}
+#| echo: true
+sessionInfo()
+```

@@ -1,4 +1,7 @@
 # =============================================================================
+# SUPERSEDED (0.3.0): reads the first run of 100 replicates
+# (data/fp_sim_100reps_results.rds); the manuscript figures now come from 13,
+# 14 and 16, and manuscript/reproduce.qmd. Kept for the record.
 # 02_make_figures.R
 # Regenerate the coverage figures from the saved results (no rerun needed).
 # Run with the COMPENDIUM ROOT as the working directory.
