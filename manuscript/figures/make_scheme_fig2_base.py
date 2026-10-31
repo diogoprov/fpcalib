@@ -194,7 +194,7 @@ rows = [("I",   "0.01", [10, 30]),
         ("III", "0.05", [10, 30, 50, 70, 90]),
         ("III", "0.20", [10, 30, 50, 70, 90])]
 gy0, gdy = 730, 50
-text(1000, gy0 - 34, "regime", 17, MUTED, "middle")
+text(984, gy0 - 34, "scenario", 17, MUTED, "middle")
 text(1070, gy0 - 34, "p<tspan dy='5' font-size='16'>10</tspan>", 17, MUTED, "middle")
 for r, (reg, p, present) in enumerate(rows):
     yy = gy0 + r * gdy

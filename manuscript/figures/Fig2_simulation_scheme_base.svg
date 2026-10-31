@@ -229,7 +229,7 @@
 <text x="796" y="803.0" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#C8691C" text-anchor="start" font-weight="normal" font-style="normal">γ<tspan dy='4' font-size='12'>FP</tspan></text>
 <line x1="880" y1="645" x2="880" y2="1220" stroke="#d9d9d9" stroke-width="1.5"/>
 <text x="910" y="660" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="42" fill="#2b2b2b" text-anchor="start" font-weight="bold" font-style="normal">c</text>
-<text x="1000" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">regime</text>
+<text x="984" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">scenario</text>
 <text x="1070" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan></text>
 <text x="1000" y="737" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="26" fill="#2b2b2b" text-anchor="middle" font-weight="bold" font-style="normal">I</text>
 <text x="1070" y="737" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">0.01</text>
