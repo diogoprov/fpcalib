@@ -44,7 +44,7 @@ caterpillar <- function(d, param, truth_col, title, xlab) {
 cell_p10 <- \(s) filter(res, scenario == s, true_p10 == 0.05, verified_coverage == 0.3)
 cell_b1  <- \(s) filter(res, scenario == s, true_p10 == 0.20, verified_coverage == 0.1)
 xp10 <- expression("False-positive rate" ~ italic(p)[10])
-xb1  <- expression("Environmental effect" ~ italic(b)[1])
+xb1  <- expression("Environmental effect" ~ beta[1])
 
 pa <- caterpillar(cell_p10("base"), "p10", "true_p10_marginal",
                   "Homogeneous false positives", xp10)

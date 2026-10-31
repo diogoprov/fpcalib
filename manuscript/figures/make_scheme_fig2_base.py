@@ -81,7 +81,7 @@ add(f'<rect width="{W}" height="{H}" fill="white"/>')
 panel(30, 52, "a")
 x0, dx = 150, 110
 sites = 8
-z      = [1, 1, 1, 0, 1, 0, 0, 0]          # occupancy falls with x (b1 < 0)
+z      = [1, 1, 1, 0, 1, 0, 0, 0]          # occupancy falls with x (β1 < 0)
 conf   = [0, 0, 0, 0, 1, 1, 2, 2]          # soundalikes rise with w (correlated with x)
 ver    = [1, 0, 1, 0, 0, 1, 0, 1]          # verified sites
 K = 8
@@ -143,13 +143,13 @@ model_chip(mx, my - 6, "flat", "p<tspan dy='5' font-size='17'>10</tspan><tspan d
 model_chip(mx + 200, my - 6, "slope", "p<tspan dy='5' font-size='17'>10</tspan><tspan dy='-5'> ~ covariate</tspan>")
 text(mx + 85, my + 150, "Stan · occuFP", 16, MUTED, "middle")
 text(mx + 285, my + 150, "w, x or a proxy of w", 16, MUTED, "middle")
-# target: interval coverage of b1
+# target: interval coverage of β1
 tx = 1640
 arrow(mx + 390, my + 40, tx - 14, my + 40)
 add(f'<line x1="{tx}" y1="{my+92}" x2="{tx+290}" y2="{my+92}" stroke="{MUTED}" stroke-width="2"/>')
 truth = tx + 110
 add(f'<line x1="{truth}" y1="{my-22}" x2="{truth}" y2="{my+100}" stroke="{INK}" stroke-width="2" stroke-dasharray="5 4"/>')
-text(truth, my + 124, "b<tspan dy='5' font-size='17'>1</tspan>", 21, INK, "middle", style="italic")
+text(truth, my + 124, "β<tspan dy='5' font-size='17'>1</tspan>", 21, INK, "middle")
 for k, (lo, hi, c) in enumerate([(70, 150, BLUE), (55, 140, BLUE), (150, 255, ORANGE), (85, 175, BLUE)]):
     yy = my - 4 + k * 22
     add(f'<line x1="{tx+lo}" y1="{yy}" x2="{tx+hi}" y2="{yy}" stroke="{c}" stroke-width="4" stroke-linecap="round"/>')
@@ -179,7 +179,7 @@ fx, fy, fw, fh = 110 + 2 * 250, by, 180, 150
 for f in (0.18, 0.36, 0.55):
     add(f'<line x1="{fx+14}" y1="{fy+fh*0.88:.1f}" x2="{fx+fw-14}" y2="{fy+fh*(0.88-0.72*f):.1f}" '
         f'stroke="{ORANGE}" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="6 4"/>')
-text(fx + fw + 6, fy + fh * 0.62, "effect", 16, ORANGE, "start", style="italic")
+text(fx + fw + 6, fy + fh * 0.62, "γ<tspan dy='4' font-size='12'>FP</tspan>", 18, ORANGE, "start")
 add(f'<line x1="880" y1="645" x2="880" y2="{H-30}" stroke="{RULE}" stroke-width="1.5"/>')
 
 # ================================================================ (c) design map
@@ -220,7 +220,7 @@ ix0, idx = 1820, 56
 eff, cors = [0.25, 0.5, 1.0, 1.5], [0.3, 0.7, 1.0]
 add(f'<line x1="{ix0-95}" y1="{gy0-40}" x2="{ix0-95}" y2="{gy0+3*gdy+70}" stroke="{RULE}" stroke-width="1.2"/>')
 text(ix0 + idx, gy0 - 34, "intensity", 17, MUTED, "middle")
-text(ix0 - 32, gy0 - 34, "effect", 15, MUTED, "end")
+text(ix0 - 32, gy0 - 34, "γ<tspan dy='4' font-size='11'>FP</tspan>", 17, MUTED, "end")
 for r, e in enumerate(eff):
     yy = gy0 + r * gdy
     text(ix0 - 32, yy + 6, f"{e:g}", 17, MUTED, "end")

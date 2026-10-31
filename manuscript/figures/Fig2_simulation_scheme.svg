@@ -158,7 +158,7 @@
 <line x1="1510" y1="370" x2="1626" y2="370" stroke="#6b6b6b" stroke-width="2.5" marker-end="url(#ah)"/>
 <line x1="1640" y1="422" x2="1930" y2="422" stroke="#6b6b6b" stroke-width="2"/>
 <line x1="1750" y1="308" x2="1750" y2="430" stroke="#2b2b2b" stroke-width="2" stroke-dasharray="5 4"/>
-<text x="1750" y="454" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="26" fill="#2b2b2b" text-anchor="middle" font-weight="normal" font-style="italic">b<tspan dy='5' font-size='17'>1</tspan></text>
+<text x="1750" y="454" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="26" fill="#2b2b2b" text-anchor="middle" font-weight="normal" font-style="normal">β<tspan dy='5' font-size='17'>1</tspan></text>
 <line x1="1710" y1="326" x2="1790" y2="326" stroke="#2A6FB0" stroke-width="4" stroke-linecap="round"/>
 <circle cx="1750.0" cy="326" r="5" fill="#2A6FB0"/>
 <line x1="1695" y1="348" x2="1780" y2="348" stroke="#2A6FB0" stroke-width="4" stroke-linecap="round"/>
@@ -226,7 +226,7 @@
 <line x1="624" y1="842.0" x2="776" y2="822.6" stroke="#C8691C" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="6 4"/>
 <line x1="624" y1="842.0" x2="776" y2="803.1" stroke="#C8691C" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="6 4"/>
 <line x1="624" y1="842.0" x2="776" y2="782.6" stroke="#C8691C" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="6 4"/>
-<text x="796" y="803.0" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#C8691C" text-anchor="start" font-weight="normal" font-style="italic">effect</text>
+<text x="796" y="803.0" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#C8691C" text-anchor="start" font-weight="normal" font-style="normal">γ<tspan dy='4' font-size='12'>FP</tspan></text>
 <line x1="880" y1="645" x2="880" y2="1220" stroke="#d9d9d9" stroke-width="1.5"/>
 <text x="910" y="660" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="42" fill="#2b2b2b" text-anchor="start" font-weight="bold" font-style="normal">c</text>
 <text x="1000" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">regime</text>
@@ -312,7 +312,7 @@
 <text x="1367" y="1120" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="24" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">% sites verified</text>
 <line x1="1725" y1="690" x2="1725" y2="950" stroke="#d9d9d9" stroke-width="1.2"/>
 <text x="1876" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="middle" font-weight="normal" font-style="normal">intensity</text>
-<text x="1788" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">effect</text>
+<text x="1788" y="696" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">γ<tspan dy='4' font-size='11'>FP</tspan></text>
 <text x="1788" y="736" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">0.25</text>
 <rect x="1810" y="720" width="20" height="20" rx="3" fill="#C8691C"/>
 <rect x="1866" y="720" width="20" height="20" rx="3" fill="#C8691C"/>
@@ -361,7 +361,7 @@
 <text x="30" y="1010" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="42" fill="#2b2b2b" text-anchor="start" font-weight="bold" font-style="normal">d</text>
 <text x="80" y="1006" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#2b2b2b" text-anchor="start" font-weight="normal" font-style="normal">observation confirmation: no verified sites, a share of occasions checked</text>
 <text x="30" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="start" font-weight="normal" font-style="normal">cor(w, x)</text>
-<text x="200" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">effect</text>
+<text x="200" y="1052" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="23" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">γ<tspan dy='4' font-size='16'>FP</tspan></text>
 <text x="200" y="1091" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="21" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> 0.05</tspan></text>
 <text x="200" y="1135" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="21" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> 0.20</tspan></text>
 <text x="200" y="1187" font-family="Helvetica, Arial, FreeSans, sans-serif" font-size="21" fill="#6b6b6b" text-anchor="end" font-weight="normal" font-style="normal">p<tspan dy='5' font-size='16'>10</tspan><tspan dy='-5'> 0.05</tspan></text>

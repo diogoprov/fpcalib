@@ -48,7 +48,7 @@ f3 <- summ_main |>
          regime = factor(regime, rev(regimes)),
          param = factor(param, c("p10", "b1"),
                         c("False*'-'*positive~rate~italic(p)[10]",
-                          "Environmental~effect~italic(b)[1]")))
+                          "Environmental~effect~beta[1]")))
 # means labelled beyond the spread of their cells, rounding half up (0.945 -> 0.95)
 f3_mean <- f3 |>
   summarise(lab_x = if_else(mean(value) > 0.5, min(value) - 0.03, max(value) + 0.03),
@@ -109,14 +109,14 @@ fig5 <- ggplot(f5, aes(coverage, cov95, colour = model, shape = model)) +
                      name = NULL) +
   scale_x_continuous(breaks = c(0.1, 0.3, 0.5, 0.7, 0.9), labels = scales::percent) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
-  labs(x = "Sites verified", y = expression("Coverage of the 95% CrI of" ~ italic(b)[1]),
+  labs(x = "Sites verified", y = expression("Coverage of the 95% CrI of" ~ beta[1]),
        caption = expression("Asterisk:" ~ italic(p)[10] %~% italic(x) ~
                               "when cor(" * italic(w) * "," ~ italic(x) * ") = 1")) +
   guides(colour = guide_legend(nrow = 2), shape = guide_legend(nrow = 2))
 save_fig(fig5, "Fig5_verification_models", 3.03)
 
 # Figure 6 -----------------------------------------------------------------------
-cor_cols <- c("0.3" = "#b9b0ee", "0.7" = "#6250d6", "1" = "#2f2475")
+cor_cols <- c("0.3" = "#e9a15a", "0.7" = "#c0621b", "1" = "#6e3409")
 cor_shp  <- c("0.3" = 16, "0.7" = 17, "1" = 15)
 dodge6 <- position_dodge(width = 0.06)
 
@@ -128,13 +128,13 @@ cor_scales <- list(
   scale_colour_manual(values = cor_cols, name = expression("cor(" * italic(w) * "," ~ italic(x) * ")")),
   scale_shape_manual(values = cor_shp, name = expression("cor(" * italic(w) * "," ~ italic(x) * ")")),
   scale_x_continuous(breaks = c(0.25, 0.5, 1, 1.5)))
-xlab6 <- expression("Effect of the confusing gradient" ~ italic(w) ~ "on logit(" * italic(p)[10] * ")")
+xlab6 <- expression("Effect of the confusing gradient" ~ italic(w) ~ "on logit(" * italic(p)[10] * ")," ~ gamma[FP])
 
 p6a <- ggplot(f6, aes(conf_effect, bias, colour = conf_cor, shape = conf_cor)) +
   geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.4, colour = ink) +
   geom_line(linewidth = 0.7, position = dodge6) +
   geom_point(size = 2.4, position = dodge6) +
-  cor_scales + labs(x = NULL, y = expression("Bias of" ~ italic(b)[1]), tag = "a")
+  cor_scales + labs(x = NULL, y = expression("Bias of" ~ beta[1]), tag = "a")
 p6b <- ggplot(f6, aes(conf_effect, cov, colour = conf_cor, shape = conf_cor)) +
   geom_hline(yintercept = 0.95, linetype = "dashed", linewidth = 0.4, colour = ink) +
   geom_linerange(aes(ymin = lo, ymax = hi), linewidth = 0.5, position = dodge6,
@@ -142,7 +142,7 @@ p6b <- ggplot(f6, aes(conf_effect, cov, colour = conf_cor, shape = conf_cor)) +
   geom_line(linewidth = 0.7, position = dodge6) +
   geom_point(size = 2.4, position = dodge6) +
   cor_scales + scale_y_continuous(limits = c(0, 1)) +
-  labs(x = NULL, y = expression("Coverage of the 95% CrI of" ~ italic(b)[1]), tag = "b")
+  labs(x = NULL, y = expression("Coverage of the 95% CrI of" ~ beta[1]), tag = "b")
 
 fig6 <- (p6a + p6b) / wrap_elements(grid::textGrob(xlab6, gp = grid::gpar(fontsize = 10))) +
   plot_layout(heights = c(1, 0.06), guides = "collect") &
