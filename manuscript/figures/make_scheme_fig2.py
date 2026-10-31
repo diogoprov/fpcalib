@@ -64,7 +64,7 @@ add += text(30, 1010, 'd', size=42, fill=DARK, anchor='start', weight='bold')
 add += text(80, 1006, 'observation confirmation: no verified sites, a share of occasions checked',
             size=23, fill=DARK, anchor='start')
 add += text(30, 1052, 'cor(w, x)', anchor='start')
-add += text(200, 1052, 'effect', anchor='end')
+add += text(200, 1052, "γ<tspan dy='4' font-size='16'>FP</tspan>", anchor='end')
 rows = [(0.7, 0.05, 1084), (0.7, 0.20, 1128), (1.0, 0.05, 1180), (1.0, 0.20, 1224)]
 for cor, p10, y in rows:
     add += text(200, y + 7, P10 + f"<tspan dy='-5'> {p10:.2f}</tspan>", anchor='end', size=21)
